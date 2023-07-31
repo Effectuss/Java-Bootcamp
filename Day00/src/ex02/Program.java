@@ -18,7 +18,7 @@ public class Program {
                 break;
             }
 
-            if(isPrimeNumber(sumDigitsNumber(elementOfSequence))) {
+            if (isPrimeNumber(sumDigitsNumber(elementOfSequence))) {
                 ++countCoffeeRequest;
             }
         }
@@ -30,7 +30,7 @@ public class Program {
     public static boolean isPrimeNumber(int number) {
         boolean isPrime = true;
 
-        for(int i = 2; i <= Math.sqrt(number); ++i) {
+        for (int i = 2; i <= Math.sqrt(number); ++i) {
             if ((number % i) == 0) {
                 isPrime = false;
                 break;
@@ -42,7 +42,7 @@ public class Program {
     public static int sumDigitsNumber(int number) {
         int sum = 0;
 
-        while(number != 0) {
+        while (number != 0) {
             sum += number % 10;
             number /= 10;
         }

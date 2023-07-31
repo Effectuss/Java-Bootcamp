@@ -10,13 +10,13 @@ public class Program {
     }
 
     public static void isPrimeNumber(int number) {
-        if(!isCorrectInput(number)) {
+        if (!isCorrectInput(number)) {
             System.err.println("Illegal Argument");
             System.exit(-1);
         }
         int iterationCount = 1;
         boolean isPrime = true;
-        for(int i = 2; i <= Math.sqrt(number); ++i, ++iterationCount) {
+        for (int i = 2; i <= Math.sqrt(number); ++i, ++iterationCount) {
             if ((number % i) == 0) {
                 isPrime = false;
                 break;
