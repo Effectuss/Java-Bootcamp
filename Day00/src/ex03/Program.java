@@ -3,38 +3,41 @@ package ex03;
 import java.util.Scanner;
 
 public class Program {
+    private static final int WEEKS_IN_SEMESTER = 18;
+    private static final int NUMBER_OF_GRADES = 5;
+    private static final int MAX_GRADE = 9;
+
     public static void main(String[] args) {
         runVisualization();
     }
 
     public static void runVisualization() {
         Scanner scanner = new Scanner(System.in);
-        int countWeek = 1;
-        int numberOfWeek = 1;
-        long markStorage = 0;
-        while (countWeek <= 18) {
+        int currentWeek = 1;
+        long gradeStorage = 0;
+
+        while (currentWeek <= WEEKS_IN_SEMESTER) {
             String inputStr = scanner.next();
             if (inputStr.equals("42")) {
                 break;
-            }
-            if (!inputStr.equals("Week")) {
+            } else if (!inputStr.equals("Week")) {
                 exitFromProgram();
-            } else {
-                if (!scanner.hasNextInt()) {
-                    exitFromProgram();
-                }
-            }
-            numberOfWeek = scanner.nextInt();
-            if (numberOfWeek != countWeek) {
+            } else if (!scanner.hasNextInt()) {
                 exitFromProgram();
             }
+
+            int weekNumber = scanner.nextInt();
+            if (weekNumber != currentWeek) {
+                exitFromProgram();
+            }
+
             int minMarkOnWeek = findMinMark(scanner);
-            markStorage *= 10;
-            markStorage += minMarkOnWeek;
-            ++countWeek;
+            gradeStorage = (gradeStorage * 10) + minMarkOnWeek;
+            ++currentWeek;
         }
-        markStorage = reverseNumber(markStorage);
-        printGraphOfMinimumGrades(markStorage);
+
+        gradeStorage = reverseNumber(gradeStorage);
+        printGraphOfMinimumGrades(gradeStorage);
     }
 
     public static long reverseNumber(long number) {
@@ -49,16 +52,18 @@ public class Program {
         return reverse_number;
     }
 
-    public static void printGraphOfMinimumGrades(long markStorage) {
+    public static void printGraphOfMinimumGrades(long gradeStorage) {
         int numberOfWeek = 1;
-        while (markStorage != 0) {
+        while (gradeStorage != 0) {
             System.out.print("Week " + numberOfWeek + " ");
-            long minMark = markStorage % 10;
-            markStorage /= 10;
+            long minMark = gradeStorage % 10;
+            gradeStorage /= 10;
+
             while (minMark != 0) {
                 System.out.print("=");
                 --minMark;
             }
+
             System.out.println(">");
             ++numberOfWeek;
         }
@@ -70,19 +75,22 @@ public class Program {
     }
 
     public static int findMinMark(Scanner scanner) {
-        int minMark = 10;
-        for (int i = 0; i < 5; ++i) {
+        int minMark = MAX_GRADE;
+        for (int i = 0; i < NUMBER_OF_GRADES; ++i) {
             if (!scanner.hasNextInt()) {
                 exitFromProgram();
             }
+
             int currentMark = scanner.nextInt();
-            if (currentMark < 0 || currentMark > 9) {
+            if (currentMark <= 0 || currentMark > MAX_GRADE) {
                 exitFromProgram();
             }
-            if (minMark > currentMark) {
+
+            if (minMark >= currentMark) {
                 minMark = currentMark;
             }
         }
+
         return minMark;
     }
 }
