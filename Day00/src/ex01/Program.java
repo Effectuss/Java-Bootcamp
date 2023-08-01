@@ -9,7 +9,7 @@ public class Program {
         scanner.close();
     }
 
-    public static void isPrimeNumber(int number) {
+    private static void isPrimeNumber(int number) {
         if (!isCorrectInput(number)) {
             System.err.println("Illegal Argument");
             System.exit(-1);
@@ -29,7 +29,7 @@ public class Program {
         }
     }
 
-    public static boolean isCorrectInput(int number) {
+    private static boolean isCorrectInput(int number) {
         return (number > 0) && (number != 1);
     }
 

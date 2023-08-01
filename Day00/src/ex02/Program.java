@@ -8,7 +8,7 @@ public class Program {
         System.out.println("Count of coffee-request - " + count);
     }
 
-    public static int countOfCoffeeRequest() {
+    private static int countOfCoffeeRequest() {
         Scanner scanner = new Scanner(System.in);
         int countCoffeeRequest = 0;
 
@@ -27,7 +27,7 @@ public class Program {
         return countCoffeeRequest;
     }
 
-    public static boolean isPrimeNumber(int number) {
+    private static boolean isPrimeNumber(int number) {
         boolean isPrime = true;
 
         for (int i = 2; i <= Math.sqrt(number); ++i) {
@@ -39,7 +39,7 @@ public class Program {
         return isPrime;
     }
 
-    public static int sumDigitsNumber(int number) {
+    private static int sumDigitsNumber(int number) {
         int sum = 0;
 
         while (number != 0) {

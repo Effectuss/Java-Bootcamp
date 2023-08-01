@@ -11,7 +11,7 @@ public class Program {
         runVisualization();
     }
 
-    public static void runVisualization() {
+    private static void runVisualization() {
         Scanner scanner = new Scanner(System.in);
         int currentWeek = 1;
         long gradeStorage = 0;
@@ -40,7 +40,7 @@ public class Program {
         printGraphOfMinimumGrades(gradeStorage);
     }
 
-    public static long reverseNumber(long number) {
+    private static long reverseNumber(long number) {
         long reverse_number = 0;
 
         while (number != 0) {
@@ -52,11 +52,11 @@ public class Program {
         return reverse_number;
     }
 
-    public static void printGraphOfMinimumGrades(long gradeStorage) {
+    private static void printGraphOfMinimumGrades(long gradeStorage) {
         int numberOfWeek = 1;
         while (gradeStorage != 0) {
             System.out.print("Week " + numberOfWeek + " ");
-            long minMark = gradeStorage % 10;
+            long minMark = gradeStorage % 10L;
             gradeStorage /= 10;
 
             while (minMark != 0) {
@@ -69,12 +69,12 @@ public class Program {
         }
     }
 
-    public static void exitFromProgram() {
+    private static void exitFromProgram() {
         System.err.println("IllegalArgument");
         System.exit(-1);
     }
 
-    public static int findMinMark(Scanner scanner) {
+    private static int findMinMark(Scanner scanner) {
         int minMark = MAX_GRADE;
         for (int i = 0; i < NUMBER_OF_GRADES; ++i) {
             if (!scanner.hasNextInt()) {

@@ -5,7 +5,7 @@ public class Program {
         Program.sumSixDigitsNumber();
     }
 
-    public static void sumSixDigitsNumber() {
+    private static void sumSixDigitsNumber() {
         int number = 479598;
         int sum = 0;
 
