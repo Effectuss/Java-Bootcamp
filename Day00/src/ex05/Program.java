@@ -6,12 +6,13 @@ public class Program {
     private static final int MAX_STUDENTS = 10;
     private static final int MAX_LENGTH_NAME = 10;
     private static final int MAX_LESSONS_PER_WEEK = 10;
+    private static final int MAX_LESSONS_PER_DAY = 6;
     private static final int MAX_LENGTH_TIME_TABLE = 4;
     private static final int MIN_LESSON_TIME = 1;
     private static final int MAX_LESSON_TIME = 6;
     private static final int DAYS_ON_WEEK = 7;
     private static final String[] nameStudents = new String[MAX_STUDENTS];
-    private static final int[][] timeTable = new int[DAYS_ON_WEEK][MAX_LESSONS_PER_WEEK];
+    private static final int[][] timeTable = new int[DAYS_ON_WEEK][MAX_LESSONS_PER_DAY];
     private static final String[][][][] schedule = new String[10][31][10][1];
 //    private static final String[] daysOfWeek = {"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
 
@@ -100,7 +101,7 @@ public class Program {
     }
 
     private static boolean isRepeatTimeOfLesson(int time, int indexDayOfWeek) {
-        for (int i = 0; i < MAX_LESSONS_PER_WEEK; ++i) {
+        for (int i = 0; i < MAX_LESSONS_PER_DAY; ++i) {
             if (time == timeTable[indexDayOfWeek][i]) {
                 return true;
             }
