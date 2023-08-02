@@ -3,16 +3,19 @@ package ex01;
 import java.util.Scanner;
 
 public class Program {
+private static final Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        isPrimeNumber(scanner.nextInt());
+        if (scanner.hasNextInt()) {
+            isPrimeNumber(scanner.nextInt());
+        } else {
+            exitFromProgram();
+        }
         scanner.close();
     }
 
     private static void isPrimeNumber(int number) {
         if (!isCorrectInput(number)) {
-            System.err.println("Illegal Argument");
-            System.exit(-1);
+            exitFromProgram();
         }
         int iterationCount = 1;
         boolean isPrime = true;
@@ -33,4 +36,9 @@ public class Program {
         return (number > 0) && (number != 1);
     }
 
+    private static void exitFromProgram() {
+        System.err.println("Illegal Argument");
+        scanner.close();
+        System.exit(-1);
+    }
 }

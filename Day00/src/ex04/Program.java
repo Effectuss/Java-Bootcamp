@@ -1,9 +1,6 @@
 package ex04;
 
-import java.rmi.MarshalException;
 import java.util.Scanner;
-
-import static java.util.Collections.swap;
 
 public class Program {
     private static final int MAX_CHARACTER = 65535;
@@ -23,9 +20,9 @@ public class Program {
         String inputString = scanner.nextLine();
         char[] arrInputData = inputString.toCharArray();
         if (arrInputData.length > MAX_INPUT_LENGTH) {
-            exitFromProgram("IllegalArgument");
+            exitFromProgram("IllegalArgument", scanner);
         } else if (arrInputData.length == 0) {
-            exitFromProgram("Empty input");
+            exitFromProgram("Empty input", scanner);
         }
         scanner.close();
         return arrInputData;
@@ -86,8 +83,9 @@ public class Program {
         }
     }
 
-    private static void exitFromProgram(String exitMessage) {
+    private static void exitFromProgram(String exitMessage, Scanner scanner) {
         System.err.println(exitMessage);
+        scanner.close();
         System.exit(-1);
     }
 }

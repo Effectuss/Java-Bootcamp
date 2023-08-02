@@ -13,7 +13,10 @@ public class Program {
         int countCoffeeRequest = 0;
 
         while (true) {
-            int elementOfSequence = scanner.nextInt();
+            if (!scanner.hasNextLong()) {
+                exitFromProgram(scanner);
+            }
+            long elementOfSequence = scanner.nextLong();
             if (elementOfSequence == 42) {
                 break;
             }
@@ -27,7 +30,7 @@ public class Program {
         return countCoffeeRequest;
     }
 
-    private static boolean isPrimeNumber(int number) {
+    private static boolean isPrimeNumber(long number) {
         boolean isPrime = true;
 
         for (int i = 2; i <= Math.sqrt(number); ++i) {
@@ -39,8 +42,8 @@ public class Program {
         return isPrime;
     }
 
-    private static int sumDigitsNumber(int number) {
-        int sum = 0;
+    private static long sumDigitsNumber(long number) {
+        long sum = 0;
 
         while (number != 0) {
             sum += number % 10;
@@ -48,4 +51,12 @@ public class Program {
         }
         return sum;
     }
+
+    private static void exitFromProgram(Scanner scanner) {
+        System.err.println("Illegal Argument");
+        scanner.close();
+        System.exit(-1);
+    }
 }
+
+

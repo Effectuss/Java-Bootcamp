@@ -18,18 +18,13 @@ public class Program {
 
         while (currentWeek <= WEEKS_IN_SEMESTER) {
             String inputStr = scanner.next();
+
             if (inputStr.equals("42")) {
                 break;
-            } else if (!inputStr.equals("Week")) {
-                exitFromProgram();
-            } else if (!scanner.hasNextInt()) {
-                exitFromProgram();
             }
 
-            int weekNumber = scanner.nextInt();
-            if (weekNumber != currentWeek) {
-                exitFromProgram();
-            }
+            validateInputStr(inputStr, scanner);
+            validateWeekNumber(scanner, currentWeek);
 
             int minMarkOnWeek = findMinMark(scanner);
             gradeStorage = (gradeStorage * 10) + minMarkOnWeek;
@@ -39,6 +34,23 @@ public class Program {
         gradeStorage = reverseNumber(gradeStorage);
         printGraphOfMinimumGrades(gradeStorage);
         scanner.close();
+    }
+
+    private static void validateInputStr(String inputStr, Scanner scanner) {
+        if (!inputStr.equals("Week")) {
+            exitFromProgram(scanner);
+        }
+    }
+
+    private static void validateWeekNumber(Scanner scanner, int currentWeek) {
+        if (!scanner.hasNextInt()) {
+            exitFromProgram(scanner);
+        }
+
+        int weekNumber = scanner.nextInt();
+        if (weekNumber != currentWeek) {
+            exitFromProgram(scanner);
+        }
     }
 
     private static long reverseNumber(long number) {
@@ -74,12 +86,12 @@ public class Program {
         int minMark = MAX_GRADE;
         for (int i = 0; i < NUMBER_OF_GRADES; ++i) {
             if (!scanner.hasNextInt()) {
-                exitFromProgram();
+                exitFromProgram(scanner);
             }
 
             int currentMark = scanner.nextInt();
             if (currentMark <= 0 || currentMark > MAX_GRADE) {
-                exitFromProgram();
+                exitFromProgram(scanner);
             }
 
             if (minMark >= currentMark) {
@@ -90,9 +102,9 @@ public class Program {
         return minMark;
     }
 
-    private static void exitFromProgram() {
+    private static void exitFromProgram(Scanner scanner) {
         System.err.println("IllegalArgument");
+        scanner.close();
         System.exit(-1);
     }
 }
-
