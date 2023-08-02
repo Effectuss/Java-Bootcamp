@@ -38,6 +38,7 @@ public class Program {
 
         gradeStorage = reverseNumber(gradeStorage);
         printGraphOfMinimumGrades(gradeStorage);
+        scanner.close();
     }
 
     private static long reverseNumber(long number) {

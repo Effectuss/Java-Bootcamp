@@ -27,6 +27,7 @@ public class Program {
         } else if (arrInputData.length == 0) {
             exitFromProgram("Empty input");
         }
+        scanner.close();
         return arrInputData;
     }
 
