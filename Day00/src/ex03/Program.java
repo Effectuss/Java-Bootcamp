@@ -69,11 +69,6 @@ public class Program {
         }
     }
 
-    private static void exitFromProgram() {
-        System.err.println("IllegalArgument");
-        System.exit(-1);
-    }
-
     private static int findMinMark(Scanner scanner) {
         int minMark = MAX_GRADE;
         for (int i = 0; i < NUMBER_OF_GRADES; ++i) {
@@ -93,4 +88,10 @@ public class Program {
 
         return minMark;
     }
+
+    private static void exitFromProgram() {
+        System.err.println("IllegalArgument");
+        System.exit(-1);
+    }
 }
+
