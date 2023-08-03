@@ -10,7 +10,7 @@ public class Program {
         System.out.println(transaction);
 
         User user3 = new User(3, "Vast", 300);
-        User user4 = new User(4, "Peter", 400);
+        User user4 = new User(6, "Peter", 400);
         Transaction transaction2 = new Transaction(user3, user4, Transaction.TransferCategory.DEBITS, 100);
         System.out.println(user3);
         System.out.println(user4);

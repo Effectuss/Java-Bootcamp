@@ -9,15 +9,15 @@ public class Transaction {
     }
 
     private final UUID identifier;
-    private final User recipient;
     private final User sender;
+    private final User recipient;
     private final TransferCategory transferCategory;
     private Integer transferAmount;
 
     public Transaction(User sender, User recipient, TransferCategory transferCategory, Integer transferAmount) {
         this.identifier = UUID.randomUUID();
-        this.recipient = recipient;
         this.sender = sender;
+        this.recipient = recipient;
         this.transferCategory = transferCategory;
         setTransferAmount(transferAmount);
     }
