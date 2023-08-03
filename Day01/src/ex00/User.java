@@ -8,11 +8,7 @@ public class User {
     public User(Integer identifier, String name, Integer balance) {
         this.setName(name);
         this.setBalance(balance);
-        if (balance > 0) {
-            this.balance = balance;
-        } else {
-            this.balance = 0;
-        }
+        this.setIdentifier(identifier);
     }
 
     public Integer getIdentifier() {
@@ -36,6 +32,10 @@ public class User {
     }
 
     public void setBalance(Integer balance) {
+        if (balance < 0) {
+            System.err.println("Error, balance cant be negative");
+            System.exit(-1);
+        }
         this.balance = balance;
     }
 

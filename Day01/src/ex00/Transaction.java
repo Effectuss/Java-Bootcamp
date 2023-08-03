@@ -3,15 +3,15 @@ package ex00;
 import java.util.UUID;
 
 public class Transaction {
-    enum TransferCategory {
+    public enum TransferCategory {
         DEBITS,
         CREDITS
     }
 
-    private UUID identifier;
-    private User recipient;
-    private User sender;
-    private TransferCategory transferCategory;
+    private final UUID identifier;
+    private final User recipient;
+    private final User sender;
+    private final TransferCategory transferCategory;
     private Integer transferAmount;
 
     public Transaction(User sender, User recipient, TransferCategory transferCategory, Integer transferAmount) {
@@ -26,32 +26,16 @@ public class Transaction {
         return identifier;
     }
 
-    public void setIdentifier(UUID identifier) {
-        this.identifier = identifier;
-    }
-
     public User getRecipient() {
         return recipient;
-    }
-
-    public void setRecipient(User recipient) {
-        this.recipient = recipient;
     }
 
     public User getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
     public TransferCategory getTransferCategory() {
         return transferCategory;
-    }
-
-    public void setTransferCategory(TransferCategory transferCategory) {
-        this.transferCategory = transferCategory;
     }
 
     public Integer getTransferAmount() {
@@ -59,18 +43,36 @@ public class Transaction {
     }
 
     public void setTransferAmount(Integer transferAmount) {
-        if(transferCategory == TransferCategory.DEBITS && transferAmount > 0) {
-
+        if (transferCategory == TransferCategory.CREDITS && (transferAmount > 0 || sender.getBalance() < -transferAmount)) {
+            this.error("Error, incorrect amount or sign transfer amount");
+        } else if (transferCategory == TransferCategory.DEBITS && (transferAmount < 0 || sender.getBalance() < transferAmount)) {
+            this.error("Error,incorrect sign or transfer amount");
         }
         this.transferAmount = transferAmount;
+        changeBalanceUsers();
+    }
+
+    private void changeBalanceUsers() {
+        if (transferCategory == TransferCategory.CREDITS) {
+            sender.setBalance(sender.getBalance() + transferAmount);
+            recipient.setBalance(recipient.getBalance() - transferAmount);
+        } else if (transferCategory == TransferCategory.DEBITS) {
+            sender.setBalance(sender.getBalance() + transferAmount);
+            recipient.setBalance(recipient.getBalance() - transferAmount);
+        }
+    }
+
+    private void error(String message) {
+        System.err.println(message);
+        System.exit(-1);
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
                 "identifier=" + identifier +
-                ", recipient=" + recipient +
                 ", sender=" + sender +
+                ", recipient=" + recipient +
                 ", transferCategory=" + transferCategory +
                 ", transferAmount=" + transferAmount +
                 '}';
