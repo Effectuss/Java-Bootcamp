@@ -13,7 +13,7 @@ public class Program {
     private static final int DAYS_ON_WEEK = 7;
     private static final String[] nameStudents = new String[MAX_STUDENTS];
     private static final int[][] timeTable = new int[DAYS_ON_WEEK][MAX_LESSONS_PER_DAY];
-    private static final String[][][][] schedule = new String[10][31][10][1];
+//    private static final String[][][][] schedule = new String[10][31][10][1];
 //    private static final String[] daysOfWeek = {"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
 
     public static void main(String[] args) {
@@ -30,11 +30,29 @@ public class Program {
     }
 
     private static void recordAttendance(Scanner scanner) {
+        String inputAttendance = scanner.nextLine();
+        while (!inputAttendance.equals(".")) {
+            String[] inputAttendanceArray = inputAttendance.split(" ");
+            if (inputAttendanceArray.length != 4) {
+                exitFromProgram("Error input, incorrect format", scanner);
+            } else if (!isExistStudent(inputAttendanceArray[0])) {
+                exitFromProgram("Error input, student does not exist", scanner);
+            }
 
+            inputAttendance = scanner.nextLine();
+        }
     }
 
     private static void printSchedule() {
+    }
 
+    private static boolean isExistStudent(String inputName) {
+        for (String name : nameStudents) {
+            if (name.equals(inputName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void populateTimeTable(Scanner scanner) {
