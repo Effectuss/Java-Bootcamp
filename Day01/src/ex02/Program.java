@@ -11,7 +11,7 @@ public class Program {
         UsersArrayList arrMy = new UsersArrayList();
 
         for (int i = 0; i < arrJava.length; ++i) {
-            arrMy.add(new User("User", i));
+            arrMy.addUser(new User("User", i));
         }
 
         for (int i = 0; i < arrJava.length; ++i) {

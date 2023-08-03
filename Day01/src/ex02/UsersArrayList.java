@@ -7,7 +7,7 @@ public class UsersArrayList implements UsersList {
     private User[] arrayUsers = new User[10];
 
     @Override
-    public void add(User user) {
+    public void addUser(User user) {
         if (size == arrayUsers.length) {
             createNewArray();
         }
