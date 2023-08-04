@@ -29,8 +29,7 @@ public class User {
 
     public void setBalance(Integer balance) {
         if (balance < 0) {
-            System.err.println("Error, balance cant be negative");
-            System.exit(-1);
+            throw new UserNotFoundException("Error, balance cant be negative");
         }
         this.balance = balance;
     }

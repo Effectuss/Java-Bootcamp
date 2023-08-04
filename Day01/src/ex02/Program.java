@@ -20,6 +20,8 @@ public class Program {
 
         System.out.println(arrMy.getUserByID(28));
 
+        System.out.println(arrMy.getNumberOfUsers());
+
         try {
             System.out.println(arrMy.getUserByIndex(28));
         } catch (UserNotFoundException e) {
