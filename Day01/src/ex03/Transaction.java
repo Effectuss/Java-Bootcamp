@@ -1,5 +1,7 @@
 package ex03;
 
+import ex04.TransactionsList;
+
 import java.util.UUID;
 
 public class Transaction {
@@ -13,6 +15,7 @@ public class Transaction {
     private final User recipient;
     private final TransferCategory transferCategory;
     private Integer transferAmount;
+    private Transaction next;
 
     public Transaction(User sender, User recipient, TransferCategory transferCategory, Integer transferAmount) {
         this.identifier = UUID.randomUUID();

@@ -21,6 +21,10 @@ public class User {
         return name;
     }
 
+    public TransactionsList getTransactionsList() {
+        return transactionsList;
+    }
+
     public Integer getBalance() {
         return balance;
     }
