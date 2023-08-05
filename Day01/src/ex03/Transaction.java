@@ -55,6 +55,14 @@ public class Transaction {
         changeBalanceUsers();
     }
 
+    public Transaction getNext() {
+        return next;
+    }
+
+    public void setNext(Transaction next) {
+        this.next = next;
+    }
+
     private void changeBalanceUsers() {
         if (transferCategory == TransferCategory.CREDITS) {
             sender.setBalance(sender.getBalance() + transferAmount);

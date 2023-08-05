@@ -3,6 +3,7 @@ package ex02;
 public class UserIdsGenerator {
     private static final UserIdsGenerator instance = new UserIdsGenerator();
     private static Integer id = 0;
+
     private UserIdsGenerator() {
     }
 

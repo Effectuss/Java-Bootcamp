@@ -1,4 +1,4 @@
-package ex03;
+package ex05;
 
 import java.util.UUID;
 
@@ -10,5 +10,4 @@ public interface TransactionsList {
     public Transaction[] toArray();
 
     public Integer getSize();
-
 }

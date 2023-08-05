@@ -9,5 +9,5 @@ public interface TransactionsList {
 
     public Transaction[] toArray();
 
-
+    public Integer getSize();
 }

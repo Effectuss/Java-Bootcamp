@@ -1,4 +1,4 @@
-package ex01;
+package ex05;
 
 public class UserIdsGenerator {
     private static final UserIdsGenerator instance = new UserIdsGenerator();
