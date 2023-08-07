@@ -4,6 +4,7 @@ public class User {
     private final Integer identifier;
     private String name;
     private Integer balance;
+
     private TransactionsList transactionsList;
 
     public User(String name, Integer balance) {
@@ -11,6 +12,10 @@ public class User {
         this.setName(name);
         this.setBalance(balance);
         this.transactionsList = new TransactionsLinkedList();
+    }
+
+    public void setTransactionsList(TransactionsList transactionsList) {
+        this.transactionsList = transactionsList;
     }
 
     public TransactionsList getTransactionsList() {

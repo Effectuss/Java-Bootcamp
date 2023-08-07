@@ -25,6 +25,10 @@ public class User {
         return transactionsList;
     }
 
+    public void setTransactionsList(TransactionsList transactionsList) {
+        this.transactionsList = transactionsList;
+    }
+
     public Integer getBalance() {
         return balance;
     }

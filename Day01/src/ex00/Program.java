@@ -5,6 +5,7 @@ public class Program {
         User user1 = new User(1, "John", 600);
         User user2 = new User(2, "Mike", 100);
         Transaction transaction = new Transaction(user1, user2, Transaction.TransferCategory.CREDITS, -345);
+        System.out.println(user1.getName());
         System.out.println(user1);
         System.out.println(user2);
         System.out.println(transaction);

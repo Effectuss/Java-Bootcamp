@@ -10,6 +10,10 @@ public class TransactionsService {
         this.usersList = new UsersArrayList();
     }
 
+    public void setUsersList(UsersList usersList) {
+        this.usersList = usersList;
+    }
+
     public void addUser(final User user) {
         usersList.addUser(user);
     }

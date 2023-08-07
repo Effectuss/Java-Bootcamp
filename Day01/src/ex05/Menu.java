@@ -7,15 +7,34 @@ public abstract class Menu {
     protected Scanner scanner;
     protected TransactionsService facade;
     protected final String separateLine = "------------------------------------------------";
+    private final int EXIT;
 
-    Menu() {
+    public Menu(int exitNumber) {
         scanner = new Scanner(System.in);
         facade = new TransactionsService();
+        EXIT = exitNumber;
     }
 
-    public abstract void runProgram();
+    public void runProgram() {
+        while (true) {
+            try {
+                printMenu();
+                int menuOption = readMenuOption();
+                if (menuOption == EXIT) {
+                    System.out.println("Good bye! See you later ;)");
+                    break;
+                }
+                selectMenuOption(menuOption);
+            } catch (Throwable e) {
+                System.out.println(e.getMessage());
+            }
+            System.out.println(separateLine);
+        }
+    }
 
     protected abstract int readMenuOption();
+
+    protected abstract void validateMenuOption(int menuOption);
 
     protected abstract void printMenu();
 
@@ -30,7 +49,9 @@ public abstract class Menu {
         }
         String userName = userDataArray[0];
         Integer userBalance = Integer.parseInt(userDataArray[1]);
-        facade.addUser(new User(userName, userBalance));
+        User tmpUser = new User(userName, userBalance);
+        facade.addUser(tmpUser);
+        System.out.println("User with id = " + tmpUser.getIdentifier() + " is added");
     }
 
     protected void showUserBalance() {
@@ -51,15 +72,36 @@ public abstract class Menu {
         Integer recipientId = Integer.parseInt(inputArray[1]);
         Integer transferAmount = Integer.parseInt(inputArray[2]);
         facade.performTransferTransaction(senderId, recipientId, transferAmount);
+        System.out.println("The transfer is completed");
     }
 
     protected void showAllTransactionsByUser() {
         System.out.println("Enter a user ID");
-        Integer userId = scanner.nextInt();
+        Integer userId = Integer.parseInt(scanner.nextLine());
         Transaction[] transactionsUser = facade.getTransactionsByUser(userId);
         for (Transaction transaction : transactionsUser) {
-            System.out.println(transaction);
+            printFullDataOfTransaction(transaction);
         }
+    }
+
+    protected void printFullDataOfTransaction(Transaction transaction) {
+        if (transaction.getTransferCategory() == Transaction.TransferCategory.CREDITS) {
+            printCreditTransaction(transaction);
+        } else if (transaction.getTransferCategory() == Transaction.TransferCategory.DEBITS) {
+            printDebitTransaction(transaction);
+        }
+    }
+
+    protected void printCreditTransaction(Transaction transaction) {
+        System.out.println("To " + transaction.getRecipient().getName() + "(id = " +
+                transaction.getRecipient().getIdentifier() + ") " +
+                transaction.getTransferAmount() + " with id = " + transaction.getIdentifier());
+    }
+
+    protected void printDebitTransaction(Transaction transaction) {
+        System.out.println("From " + transaction.getSender().getName() + "(id = " +
+                transaction.getSender().getIdentifier() + ") "
+                + transaction.getTransferAmount() + " with id = " + transaction.getIdentifier());
     }
 
 }

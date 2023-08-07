@@ -10,4 +10,6 @@ public interface TransactionsList {
     public Transaction[] toArray();
 
     public Integer getSize();
+
+    public Transaction getTransactionById(UUID id);
 }

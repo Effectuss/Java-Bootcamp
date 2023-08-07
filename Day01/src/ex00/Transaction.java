@@ -8,17 +8,17 @@ public class Transaction {
         CREDITS
     }
 
-    private final UUID identifier;
-    private final User sender;
-    private final User recipient;
-    private final TransferCategory transferCategory;
+    private UUID identifier;
+    private User sender;
+    private User recipient;
+    private TransferCategory transferCategory;
     private Integer transferAmount;
 
     public Transaction(User sender, User recipient, TransferCategory transferCategory, Integer transferAmount) {
-        this.identifier = UUID.randomUUID();
-        this.sender = sender;
-        this.recipient = recipient;
-        this.transferCategory = transferCategory;
+        this.setIdentifier(UUID.randomUUID());
+        this.setSender(sender);
+        this.setRecipient(recipient);
+        this.setTransferCategory(transferCategory);
         setTransferAmount(transferAmount);
     }
 
@@ -40,6 +40,22 @@ public class Transaction {
 
     public Integer getTransferAmount() {
         return transferAmount;
+    }
+
+    public void setIdentifier(UUID identifier) {
+        this.identifier = identifier;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public void setRecipient(User recipient) {
+        this.recipient = recipient;
+    }
+
+    public void setTransferCategory(TransferCategory transferCategory) {
+        this.transferCategory = transferCategory;
     }
 
     public void setTransferAmount(Integer transferAmount) {

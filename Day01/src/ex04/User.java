@@ -13,6 +13,10 @@ public class User {
         this.transactionsList = new TransactionsLinkedList();
     }
 
+    public void setTransactionsList(TransactionsList transactionsList) {
+        this.transactionsList = transactionsList;
+    }
+
     public TransactionsList getTransactionsList() {
         return transactionsList;
     }

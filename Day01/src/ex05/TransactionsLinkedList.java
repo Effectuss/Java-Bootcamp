@@ -96,4 +96,17 @@ public class TransactionsLinkedList implements TransactionsList {
         }
         return array;
     }
+
+    @Override
+    public Transaction getTransactionById(UUID transactionId) {
+        Node current = head;
+        while (current != null) {
+            if (current.transaction.getIdentifier().equals(transactionId)) {
+                return current.transaction;
+            }
+            current = current.next;
+        }
+        throw new TransactionNotFoundException("Transaction with " + transactionId + " not found!");
+    }
+
 }

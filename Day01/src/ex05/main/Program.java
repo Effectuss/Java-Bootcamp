@@ -1,4 +1,8 @@
-package ex05;
+package ex05.main;
+
+import ex05.Menu;
+import ex05.MenuDevMode;
+import ex05.MenuProductionMode;
 
 public class Program {
     public static void main(String[] args) {

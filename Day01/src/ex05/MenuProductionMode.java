@@ -9,26 +9,10 @@ public class MenuProductionMode extends Menu {
             4. View all transactions for a specific user
             5. Finish execution
             """;
+    private final int EXIT = 5;
 
-    MenuProductionMode() {
-        super();
-    }
-
-    @Override
-    public void runProgram() {
-        while (true) {
-            try {
-                printMenu();
-                int menuOption = readMenuOption();
-                if (menuOption == 5) {
-                    break;
-                }
-                selectMenuOption(menuOption);
-            } catch (Throwable e) {
-                System.out.println(e.getMessage());
-            }
-            System.out.println(separateLine);
-        }
+    public MenuProductionMode() {
+        super(5);
     }
 
     @Override
@@ -40,10 +24,15 @@ public class MenuProductionMode extends Menu {
     protected int readMenuOption() {
         System.out.print("-> ");
         int menuOption = Integer.parseInt(scanner.nextLine());
-        if (menuOption < 0 || menuOption > 5) {
+        validateMenuOption(menuOption);
+        return menuOption;
+    }
+
+    @Override
+    protected void validateMenuOption(int menuOption) {
+        if (menuOption < 0 || menuOption > EXIT) {
             throw new IllegalArgumentException("Invalid menu option");
         }
-        return menuOption;
     }
 
     @Override
