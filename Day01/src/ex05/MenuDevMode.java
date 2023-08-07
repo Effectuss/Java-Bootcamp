@@ -12,7 +12,17 @@ public class MenuDevMode extends Menu {
     }
 
     @Override
-    protected void readMenuOption() {
+    protected int readMenuOption() {
+        return 0;
+    }
+
+    @Override
+    protected void printMenu() {
+
+    }
+
+    @Override
+    protected void selectMenuOption(final int menuOption) {
 
     }
 }
