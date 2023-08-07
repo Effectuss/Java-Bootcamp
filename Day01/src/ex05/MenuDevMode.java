@@ -1,30 +1,18 @@
 package ex05;
 
-import java.util.UUID;
+public class MenuDevMode extends Menu {
 
-public class MenuDevMode implements Menu {
+    MenuDevMode() {
+        super();
+    }
+
     @Override
-    public void RunProgram() {
+    public void runProgram() {
 
     }
 
     @Override
-    public void addUser(String name, Integer balance) {
-
-    }
-
-    @Override
-    public void showUserBalance(Integer userId) {
-
-    }
-
-    @Override
-    public void performTransferTransaction(UUID senderId, UUID recipientId, Integer amount) {
-
-    }
-
-    @Override
-    public void showAllTransactionsByUser(Integer userId) {
+    protected void readMenuOption() {
 
     }
 }

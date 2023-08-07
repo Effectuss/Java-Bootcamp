@@ -18,6 +18,10 @@ public class TransactionsService {
         return usersList.getUserByID(id).getBalance();
     }
 
+    public User getUserByID(final Integer id) {
+        return usersList.getUserByID(id);
+    }
+
     public Integer getBalanceUser(final User user) {
         for (int i = 0; i < usersList.getNumberOfUsers(); ++i) {
             if (usersList.getUserByIndex(i).getIdentifier().equals(user.getIdentifier())) {
@@ -40,7 +44,7 @@ public class TransactionsService {
 
         debit.setIdentifier(credit.getIdentifier());
 
-        this.addTransactionForUsers(sender, recipient, credit, debit);
+        this.addTransactionForUsers(sender, recipient, debit, credit);
         this.changeBalanceUsers(sender, recipient, transferAmount);
     }
 
