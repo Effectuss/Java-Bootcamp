@@ -6,20 +6,23 @@ import java.util.*;
 
 public class FileReaderSignatures implements FileReader {
     @Override
-    public Map<String, List<String>> read(File file) {
-         Map<String, List<String>> mapSignatures = new HashMap<>();
+    public Map<String, String> read(File file) {
+        Map<String, String> multiHashMapSignatures = new HashMap<>();
         try (FileInputStream inputStream = new FileInputStream(file);) {
             Scanner fileScanner = new Scanner(inputStream);
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] tokens = line.split(",");
-                mapSignatures.computeIfAbsent(tokens[0].trim(), k -> new ArrayList<>()).add(tokens[1].trim());
+                multiHashMapSignatures.put(tokens[1].replaceAll("\\s+", ""), tokens[0].trim());
             }
+            // ?
+            System.out.println(multiHashMapSignatures);
+            inputStream.close();
             fileScanner.close();
         } catch (Throwable error) {
             System.out.println(error.getMessage());
             System.exit(-1);
         }
-        return mapSignatures;
+        return multiHashMapSignatures;
     }
 }
