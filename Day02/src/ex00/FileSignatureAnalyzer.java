@@ -8,8 +8,9 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public class FileSignatureAnalyzer {
+
     public static String analyzeFileSignatures(Map<String, String> mapSignatures, File file) {
-        String signature = "";
+        String signature;
         int maxLengthSignature = findMaxLenOfSignatureInByte(mapSignatures);
         try {
             byte[] fileBytes = Files.readAllBytes(Path.of(file.getPath()));
@@ -18,7 +19,6 @@ public class FileSignatureAnalyzer {
             System.arraycopy(fileBytes, 0, fileSignature, 0, bytesToRead);
             String fileSignatureHex = bytesToHex(fileSignature);
             signature = findSignature(mapSignatures, fileSignatureHex);
-            System.out.println(signature);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
