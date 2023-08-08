@@ -1,7 +1,6 @@
 package ex00;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,18 +9,29 @@ import java.util.Map;
 public class FileSignatureAnalyzer {
 
     public static String analyzeFileSignatures(Map<String, String> mapSignatures, File file) {
-        String signature;
-        int maxLengthSignature = findMaxLenOfSignatureInByte(mapSignatures);
+        String signature = "UNDEFINED";
+
+        if (!file.exists()) {
+            throw new RuntimeException("File does not exist");
+        }
+
         try {
+            int maxLengthSignature = findMaxLenOfSignatureInByte(mapSignatures);
             byte[] fileBytes = Files.readAllBytes(Path.of(file.getPath()));
+
+            if (fileBytes.length == 0) {
+                throw new RuntimeException("File is empty");
+            }
+
             int bytesToRead = Math.min(fileBytes.length, maxLengthSignature);
             byte[] fileSignature = new byte[maxLengthSignature];
             System.arraycopy(fileBytes, 0, fileSignature, 0, bytesToRead);
             String fileSignatureHex = bytesToHex(fileSignature);
             signature = findSignature(mapSignatures, fileSignatureHex);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
+
         return signature;
     }
 

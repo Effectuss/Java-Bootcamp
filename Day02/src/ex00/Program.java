@@ -6,27 +6,28 @@ import java.util.Scanner;
 
 public class Program {
     public static void main(String[] args) {
-        try {
-            Map<String, String> mapSignatures = FileReaderSignatures.read();
+        Scanner consoleScanner = new Scanner(System.in);
+        Map<String, String> mapSignatures = FileReaderSignatures.read();
 
-            Scanner consoleScanner = new Scanner(System.in);
-            String inputFilePath = consoleScanner.nextLine();
+        String inputFilePath = consoleScanner.nextLine();
 
-            while (!inputFilePath.equals("42")) {
+        while (!inputFilePath.equals("42")) {
+            try {
                 String fileSignature = FileSignatureAnalyzer.analyzeFileSignatures(mapSignatures, new File(inputFilePath));
+
                 if (fileSignature.equals("UNDEFINED")) {
                     System.out.println("UNDEFINED");
                 } else {
                     System.out.println("PROCESSED");
                     FileWriterSignature.writeExtension(fileSignature);
                 }
-                inputFilePath = consoleScanner.nextLine();
-            }
 
-            consoleScanner.close();
-        } catch (Throwable error) {
-            System.out.println(error.getMessage());
-            System.exit(-1);
+            } catch (Throwable error) {
+                System.out.println(error.getMessage());
+            }
+            inputFilePath = consoleScanner.nextLine();
         }
+
+        consoleScanner.close();
     }
 }
