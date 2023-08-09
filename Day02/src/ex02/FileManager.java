@@ -36,14 +36,14 @@ public class FileManager {
             return;
         }
         switch (command.split(" ")[0]) {
-            case "mv" -> executeMV();
-            case "cd" -> executeCD(currentAbsolutePath.resolve(command.split(" ")[1]));
-            case "ls" -> executeLS();
+            case "mv" -> executeCommandMV();
+            case "cd" -> executeCommandCD(command.split(" ")[1]);
+            case "ls" -> executeCommandLS();
             default -> System.out.println("Unknown command!");
         }
     }
 
-    private void executeLS() {
+    private void executeCommandLS() {
         try (Stream<Path> stream = Files.list(currentAbsolutePath)) {
             stream.forEach(file -> {
                 try {
@@ -59,10 +59,17 @@ public class FileManager {
         }
     }
 
-    private void executeCD(Path pathForMove) {
+    private void executeCommandCD(String pathForMove) {
+        Path newPath = currentAbsolutePath.resolve(pathForMove);
+        if (Files.exists(newPath)) {
+            currentAbsolutePath = newPath.toAbsolutePath().normalize();
+            System.out.println(currentAbsolutePath);
+        } else {
+            System.out.println("No such file or directory!");
+        }
     }
 
-    private void executeMV() {
+    private void executeCommandMV() {
 
     }
 
