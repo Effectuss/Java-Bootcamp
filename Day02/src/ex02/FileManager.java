@@ -31,9 +31,13 @@ public class FileManager {
     }
 
     private void executeCommands(String command) {
-        switch (command) {
+        if (!isValidEntryCommand(command)) {
+            System.out.println("Invalid command!");
+            return;
+        }
+        switch (command.split(" ")[0]) {
             case "mv" -> executeMV();
-            case "cd" -> executeCD();
+            case "cd" -> executeCD(currentAbsolutePath.resolve(command.split(" ")[1]));
             case "ls" -> executeLS();
             default -> System.out.println("Unknown command!");
         }
@@ -55,11 +59,22 @@ public class FileManager {
         }
     }
 
-    private void executeCD() {
-
+    private void executeCD(Path pathForMove) {
     }
 
     private void executeMV() {
 
+    }
+
+    private boolean isValidEntryCommand(String command) {
+        String[] commands = command.split(" ");
+        int length = commands.length;
+
+        return switch (commands[0]) {
+            case "ls" -> length == 1;
+            case "cd" -> length == 2;
+            case "mv" -> length == 3;
+            default -> false;
+        };
     }
 }
