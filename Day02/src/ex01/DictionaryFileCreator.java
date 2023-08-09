@@ -1,23 +1,28 @@
 package ex01;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DictionaryFileCreator {
+
+    private static Set<String> dictionary;
+    private static List<String> listWordsFileA;
+    private static List<String> listWordsFileB;
+
     static public void createDictionaryFile(File fileA, File fileB, String dictionaryName) throws IOException {
-        Set<String> wordsFromFileA = readWordsFromFile(fileA);
-        Set<String> wordsFromFileB = readWordsFromFile(fileB);
-        Set<String> dictionary = new TreeSet<>(wordsFromFileA);
-        dictionary.addAll(wordsFromFileB);
+        listWordsFileA = readWordsFromFile(fileA);
+        listWordsFileB = readWordsFromFile(fileB);
+        System.out.println(listWordsFileA);
+        System.out.println(listWordsFileB);
+        dictionary = new TreeSet<>(listWordsFileA);
+        dictionary.addAll(listWordsFileB);
         writeDictionaryIntoFile(dictionary, dictionaryName);
     }
 
-    static private Set<String> readWordsFromFile(File file) throws IOException {
-        Set<String> wordsFromFile = new HashSet<>();
+    static private List<String> readWordsFromFile(File file) throws IOException {
+        List<String> wordsFromFile = new LinkedList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file.getPath()))) {
             Pattern pattern = Pattern.compile("\\b[a-zA-Z]+\\b");
             String line;
@@ -45,5 +50,17 @@ public class DictionaryFileCreator {
             }
             writer.write(sb.substring(0, sb.length() - 2));
         }
+    }
+
+    static public Set<String> getDictionary() {
+        return dictionary;
+    }
+
+    static public List<String> getListWordsFileA() {
+        return listWordsFileA;
+    }
+
+    static public List<String> getListWordsFileB() {
+        return listWordsFileB;
     }
 }
