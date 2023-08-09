@@ -2,7 +2,9 @@ package ex02;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -36,8 +38,10 @@ public class FileManager {
             return;
         }
         switch (command.split(" ")[0]) {
-            case "mv" -> executeCommandMV();
-            case "cd" -> executeCommandCD(command.split(" ")[1]);
+            case "mv" -> executeCommandMV(
+                    currentAbsolutePath.resolve((command.split(" ")[1])),
+                    currentAbsolutePath.resolve(command.split(" ")[2]));
+            case "cd" -> executeCommandCD(currentAbsolutePath.resolve(command.split(" ")[1]));
             case "ls" -> executeCommandLS();
             default -> System.out.println("Unknown command!");
         }
@@ -51,26 +55,33 @@ public class FileManager {
 
                     System.out.println(file.getFileName() + " " + (double) fileSize / 1024 + " KB");
                 } catch (IOException e) {
-                    System.err.println(e.getMessage());
+                    System.out.println(e.getMessage());
                 }
             });
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
-    private void executeCommandCD(String pathForMove) {
-        Path newPath = currentAbsolutePath.resolve(pathForMove);
-        if (Files.exists(newPath)) {
-            currentAbsolutePath = newPath.toAbsolutePath().normalize();
+    private void executeCommandCD(Path pathForMove) {
+        if (Files.exists(pathForMove)) {
+            currentAbsolutePath = pathForMove.toAbsolutePath().normalize();
             System.out.println(currentAbsolutePath);
         } else {
-            System.out.println("No such file or directory!");
+            System.out.println("No such file or directory: " + pathForMove);
         }
     }
 
-    private void executeCommandMV() {
-
+    private void executeCommandMV(Path sourceFile, Path targetFile) {
+        try {
+            System.out.println(targetFile.toAbsolutePath().normalize());
+            String s = targetFile.toAbsolutePath().normalize().toString() + "/" +sourceFile.getFileName();
+            System.out.println(s);
+            Files.move(sourceFile, Path.of(s), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            System.out.println("Rename " + sourceFile + " to " + targetFile
+                    + ": No such file or directory");
+        }
     }
 
     private boolean isValidEntryCommand(String command) {
