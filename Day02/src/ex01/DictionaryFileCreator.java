@@ -14,8 +14,6 @@ public class DictionaryFileCreator {
     static public void createDictionaryFile(File fileA, File fileB, String dictionaryName) throws IOException {
         listWordsFileA = readWordsFromFile(fileA);
         listWordsFileB = readWordsFromFile(fileB);
-        System.out.println(listWordsFileA);
-        System.out.println(listWordsFileB);
         dictionary = new TreeSet<>(listWordsFileA);
         dictionary.addAll(listWordsFileB);
         writeDictionaryIntoFile(dictionary, dictionaryName);

@@ -9,11 +9,12 @@ public class Program {
                 throw new IllegalArgumentException("Incorrect number of arguments!");
             }
             DictionaryFileCreator.createDictionaryFile(new File(args[0]), new File(args[1]), "src/ex01/Dictionary.txt");
-            int similarity = SimilarityCounter.countSimilarity(
+            double similarity = SimilarityCounter.countSimilarity(
                     DictionaryFileCreator.getListWordsFileA(),
                     DictionaryFileCreator.getListWordsFileB(),
                     DictionaryFileCreator.getDictionary()
             );
+            System.out.printf("Similarity = %f", similarity);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.exit(-1);
