@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.security.spec.RSAOtherPrimeInfo;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -20,7 +21,7 @@ public class FileManager {
     }
 
     public void run() {
-        try (Scanner scanner = new Scanner(System.in)) {
+        try (var scanner = new Scanner(System.in)) {
             System.out.println(currentAbsolutePath.toString());
             System.out.print("-> ");
             String inputCommand = scanner.nextLine();
@@ -33,38 +34,74 @@ public class FileManager {
     }
 
     private void executeCommands(String command) {
-        if (!isValidEntryCommand(command)) {
+        String[] commands = command.split(" ");
+        if (!isValidEntryCommand(commands)) {
             System.out.println("Invalid command!");
             return;
         }
-        switch (command.split(" ")[0]) {
-            case "mv" -> executeCommandMV(
-                    currentAbsolutePath.resolve((command.split(" ")[1])),
-                    currentAbsolutePath.resolve(command.split(" ")[2]));
-            case "cd" -> executeCommandCD(currentAbsolutePath.resolve(command.split(" ")[1]));
-            case "ls" -> executeCommandLS();
-            default -> System.out.println("Unknown command!");
+        String commandName = commands[0];
+        switch (commandName) {
+            case "mv":
+                executeCommandMV(currentAbsolutePath.resolve(commands[1]), Path.of(commands[2]));
+                break;
+            case "cd":
+                if (commands.length == 2) {
+                    executeCommandCD(currentAbsolutePath.resolve(commands[1]));
+                } else {
+                    executeCommandCD(Path.of(commands[0]));
+                }
+                break;
+            case "ls":
+                executeCommandLS();
+                break;
+            default:
+                System.out.println("Unknown command!");
+                break;
         }
     }
 
     private void executeCommandLS() {
         try (Stream<Path> stream = Files.list(currentAbsolutePath)) {
-            stream.forEach(file -> {
-                try {
-                    long fileSize = Files.size(file);
-
-                    System.out.println(file.getFileName() + " " + (double) fileSize / 1024 + " KB");
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
-            });
+            stream.forEach(this::printFileInfo);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error listing files: " + e.getMessage());
+        }
+    }
+
+    private void printFileInfo(Path file) {
+        try {
+            if (Files.isDirectory(file)) {
+                long dirSize = calculateDirectorySize(file);
+                System.out.println(file.getFileName() + " " + (double) dirSize / 1024 + " KB");
+            } else {
+                long fileSize = Files.size(file);
+                System.out.println(file.getFileName() + " " + (double) fileSize / 1024 + " KB");
+            }
+        } catch (IOException e) {
+            System.err.println("Error getting file size: " + e.getMessage());
+        }
+    }
+
+    private long calculateDirectorySize(Path directory) throws IOException {
+        try (Stream<Path> stream = Files.list(directory)) {
+            return stream
+                    .filter(Files::isRegularFile)
+                    .mapToLong(file -> {
+                        try {
+                            return Files.size(file);
+                        } catch (IOException e) {
+                            System.err.println("Error getting size of file: " + file);
+                            return 0;
+                        }
+                    })
+                    .sum();
         }
     }
 
     private void executeCommandCD(Path pathForMove) {
-        if (Files.exists(pathForMove)) {
+        if (pathForMove.toString().equals("cd")) {
+            goToHomeDirectory();
+        } else if (Files.exists(pathForMove)) {
             currentAbsolutePath = pathForMove.toAbsolutePath().normalize();
             System.out.println(currentAbsolutePath);
         } else {
@@ -72,25 +109,46 @@ public class FileManager {
         }
     }
 
+    private void goToHomeDirectory() {
+        String homeDirectory = System.getProperty("user.home");
+        currentAbsolutePath = Path.of(homeDirectory).toAbsolutePath();
+        System.out.println(currentAbsolutePath);
+    }
+
     private void executeCommandMV(Path sourceFile, Path targetFile) {
+        if (targetFile.toString().contains("/")) {
+            renameFile(sourceFile, targetFile);
+        } else {
+            moveFile(sourceFile, targetFile);
+        }
+    }
+
+    private void renameFile(Path sourceFile, Path targetFile) {
         try {
-            System.out.println(targetFile.toAbsolutePath().normalize());
-            String s = targetFile.toAbsolutePath().normalize().toString() + "/" +sourceFile.getFileName();
-            System.out.println(s);
-            Files.move(sourceFile, Path.of(s), StandardCopyOption.REPLACE_EXISTING);
+            targetFile = currentAbsolutePath.resolve(targetFile).resolve(sourceFile.getFileName());
+            Files.move(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             System.out.println("Rename " + sourceFile + " to " + targetFile
                     + ": No such file or directory");
         }
     }
 
-    private boolean isValidEntryCommand(String command) {
-        String[] commands = command.split(" ");
+    private void moveFile(Path sourceFile, Path targetFile) {
+        try {
+            targetFile = currentAbsolutePath.resolve(targetFile.toString());
+            Files.move(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            System.out.println("Move " + sourceFile + " to " + targetFile
+                    + ": No such file or directory");
+        }
+    }
+
+    private boolean isValidEntryCommand(String[] commands) {
         int length = commands.length;
 
         return switch (commands[0]) {
             case "ls" -> length == 1;
-            case "cd" -> length == 2;
+            case "cd" -> length == 2 || length == 1;
             case "mv" -> length == 3;
             default -> false;
         };

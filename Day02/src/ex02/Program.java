@@ -7,7 +7,7 @@ public class Program {
         if (args.length != 1 || !isValidInputArgument(args[0])) {
             System.exit(-1);
         }
-        Path startAbsolutePath =  createStartAbsolutePath(args[0]);
+        Path startAbsolutePath = createStartAbsolutePath(args[0]);
         FileManager fileManager = new FileManager(startAbsolutePath);
         fileManager.run();
     }
