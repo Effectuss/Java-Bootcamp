@@ -1,28 +1,31 @@
 package ex01;
 
-import java.util.concurrent.ArrayBlockingQueue;
-
 public class Program {
+    public static int count;
+
     public static void main(String[] args) {
         if (args.length == 0 || !isValidProgramArguments(args)) {
             System.err.println("Invalid program arguments");
             System.exit(-1);
         }
         try {
-            int count = getCountHumans(args);
+            Program.count = getCountHumans(args);
 
-            ArrayBlockingQueue<String> buffer = new ArrayBlockingQueue<String>(1);
-
-            Thread eggRunnable = new Thread(new ConsumerEggHen(count, buffer));
-            Thread henRunnable = new Thread(new ProducerEggHen(count, buffer));
-
-            eggRunnable.start();
-            henRunnable.start();
-
+            runSynchronizedVersion();
 
         } catch (NumberFormatException e) {
             System.err.println("Invalid number format: " + e.getMessage());
         }
+    }
+
+    private static void runSynchronizedVersion() {
+        ArgumentOrchestrator orchestrator = new ArgumentOrchestrator();
+
+        Thread eggThread = new Thread(new EggThread(orchestrator));
+        Thread henTread = new Thread(new HenThread(orchestrator));
+
+        eggThread.start();
+        henTread.start();
     }
 
     public static boolean isValidProgramArguments(String[] args) {
