@@ -12,7 +12,7 @@ public class ProgramArgumentsWorker {
 
     public static void startParsingProgramArguments(String[] args) throws IllegalProgramArgumentsException {
         if (!isValidProgramArguments(args)) {
-            throw new IllegalProgramArgumentsException("Invalid arguments");
+            throw new IllegalProgramArgumentsException("Unknown arguments: " + Arrays.toString(args));
         }
         arrayOfArgs.addAll(Arrays.asList(args));
         fillDataForProgram();

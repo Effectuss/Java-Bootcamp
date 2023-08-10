@@ -6,7 +6,6 @@ public class Program {
             ProgramArgumentsWorker.startParsingProgramArguments(args);
             int arrSize = ProgramArgumentsWorker.getArrSize();
             int threadsCount = ProgramArgumentsWorker.getThreadsCount();
-
         } catch (IllegalProgramArgumentsException e) {
             System.err.println(e.getMessage());
         }
