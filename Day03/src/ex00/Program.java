@@ -15,18 +15,15 @@ public class Program {
             henRunnable.start();
             eggRunnable.join();
             henRunnable.join();
-            printHuman(count);
+
+            for (int i = 0; i < count; ++i) {
+                System.out.println("Human");
+            }
 
         } catch (NumberFormatException e) {
             System.err.println("Invalid number format: " + e.getMessage());
         } catch (InterruptedException e) {
             System.err.println("Thread interrupted: " + e.getMessage());
-        }
-    }
-
-    public static void printHuman(int countHumans) {
-        for (int i = 0; i < countHumans; ++i) {
-            System.out.println("Human");
         }
     }
 

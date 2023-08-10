@@ -1,6 +1,6 @@
 package ex01;
 
-public class HenThread extends Thread {
+public class HenThread implements Runnable {
     private final ArgumentOrchestrator orchestrator;
 
     public HenThread(ArgumentOrchestrator orchestrator) {

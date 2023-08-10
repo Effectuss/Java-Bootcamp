@@ -1,6 +1,6 @@
 package ex01;
 
-public class EggThread extends Thread {
+public class EggThread implements Runnable {
     private final ArgumentOrchestrator orchestrator;
 
     public EggThread(ArgumentOrchestrator orchestrator) {
