@@ -29,6 +29,9 @@ public class ProgramArgumentsWorker {
     private static void fillDataForProgram() {
         try {
             arrSize = Integer.parseInt(arrayOfArgs.get(0).split("=")[1]);
+            if (arrSize > 2000000) {
+                throw new IllegalProgramArgumentsException("The array size must be less than 2000000");
+            }
             threadsCount = Integer.parseInt(arrayOfArgs.get(1).split("=")[1]);
         } catch (NumberFormatException e) {
             throw new IllegalProgramArgumentsException("Invalid number format: " + e.getMessage());

@@ -17,6 +17,10 @@ public class ThreadedArraySummator {
     public int calculateSum() throws InterruptedException {
         Thread[] threads = new Thread[numberOfThreads];
         int chunkSize = countChunkSize();
+//        for(int i = 0; i < numberOfThreads; ++i) {
+//
+//        }
+
         for (int i = 0; i < numberOfThreads; i++) {
             final int start = i * chunkSize;
             final int end = (i == numberOfThreads - 1) ? array.length : start + chunkSize;
