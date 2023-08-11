@@ -9,10 +9,6 @@ public class GeneratorRandomArray {
         for (int i = 0; i < size; i++) {
             array[i] = randomizer.nextInt(2001) - 1000;
         }
-        for (int i = 0; i < size; i++) {
-            System.out.print(array[i] + " ");
-        }
-        System.out.println();
         return array;
     }
 }
