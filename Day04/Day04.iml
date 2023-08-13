@@ -10,11 +10,19 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/ex02/ImagesToChar/lib" />
+          <root url="jar://$MODULE_DIR$/ex02/ImagesToChar/lib/JCDP-4.0.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/ex02/ImagesToChar/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/ex02/ImagesToChar/lib/jcommander-1.82.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
