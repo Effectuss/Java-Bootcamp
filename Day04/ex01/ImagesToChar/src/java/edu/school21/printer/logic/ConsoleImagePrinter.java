@@ -21,9 +21,11 @@ public class ConsoleImagePrinter {
 
     public void print() throws IOException {
         Image image = new Image(ImageIO.read(Objects.requireNonNull(ConsoleImagePrinter.class.getResource(imageFile.getPath()))));
+
         for (int i = 0; i < image.getHeight(); i++) {
             for (int j = 0; j < image.getWidth(); j++) {
                 int pixel = image.getBufferedImage().getRGB(j, i);
+
                 if (pixel == Color.BLACK.getRGB()) {
                     System.out.print(blackPixel);
                 } else if (pixel == Color.WHITE.getRGB()) {
