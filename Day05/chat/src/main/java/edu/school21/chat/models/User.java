@@ -2,14 +2,18 @@ package edu.school21.chat.models;
 
 import lombok.*;
 
-@ToString
+import java.util.List;
+
+@ToString(includeFieldNames=true)
 @EqualsAndHashCode
 @AllArgsConstructor
 @Getter
 public class User {
-    private final int id;
+    private final long id;
     @Setter
     private String login;
     @Setter
     private String password;
+    private List<Chatroom> rooms;
+    private List<Chatroom> createdRooms;
 }
