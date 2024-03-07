@@ -8,6 +8,7 @@ import java.util.List;
 @EqualsAndHashCode
 @AllArgsConstructor
 @Getter
+@Builder
 public class User {
     private final long id;
     @Setter

@@ -4,10 +4,11 @@ import lombok.*;
 
 import java.util.List;
 
-@ToString(includeFieldNames=true)
+@ToString(includeFieldNames = true)
 @EqualsAndHashCode
 @AllArgsConstructor
 @Getter
+@Builder
 public class Chatroom {
     private final long id;
     @Setter
