@@ -1,10 +1,9 @@
 package edu.school21.chat.models;
 
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @ToString
-@Getter
+@EqualsAndHashCode
 public class Chatroom {
-    private Long id = 100L;
 }
