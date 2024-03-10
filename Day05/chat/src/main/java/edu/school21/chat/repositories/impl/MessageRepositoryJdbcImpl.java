@@ -16,25 +16,32 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
 
     private final DataSource dataSource;
     private static final String FIND_BY_ID_QUERY = """
-                  SELECT
-                    messages.id AS message_id,
-                    messages.text,
-                    messages.message_date,
-                    chatrooms.id AS chatroom_id,
-                    chatrooms.name,
-                    users.id AS user_id,
-                    users.login,
-                    users.password
-                FROM messages
-                JOIN chatrooms ON messages.chatroom_id = chatrooms.id
-                JOIN users ON messages.author_id = users.id
-                WHERE messages.id = ?;
+            SELECT
+                messages.id AS message_id,
+                messages.text,
+                messages.message_date,
+                chatrooms.id AS chatroom_id,
+                chatrooms.name,
+                users.id AS user_id,
+                users.login,
+                users.password
+            FROM messages
+            JOIN chatrooms ON messages.chatroom_id = chatrooms.id
+            JOIN users ON messages.author_id = users.id
+            WHERE messages.id = ?;
             """;
 
     private static final String SAVE_MESSAGE = """
             INSERT INTO messages (author_id, chatroom_id, text, message_date)
-            VALUES (?, ?, ?, ?);
+            VALUES (?, ?, ?, ?)
+            RETURNING id;
             """;
+
+    private static final String UPDATE_MESSAGE = """
+            UPDATE messages SET author_id = ?,  chatroom_id = ?, text = ?, message_date = ?
+            WHERE id = ?;
+            """;
+
 
     @Override
     public Optional<Message> findById(long id) {
@@ -59,7 +66,9 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
                                     .owner(null)
                                     .build())
                             .text(resultSet.getString("text"))
-                            .date(resultSet.getTimestamp("message_date").toLocalDateTime())
+                            .date(resultSet.getTimestamp("message_date") != null ?
+                                    resultSet.getTimestamp("message_date").toLocalDateTime() :
+                                    null)
                             .build()
                     );
                 }
@@ -73,28 +82,38 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
     @Override
     public void save(Message message) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SAVE_MESSAGE, Statement.RETURN_GENERATED_KEYS)) {
-
-            if (message.getAuthor().getId() == null || message.getChatroom().getId() == null) {
-                throw new NotSavedSubEntityException("Author ID or Chatroom ID is null");
-            }
+             PreparedStatement statement = connection.prepareStatement(SAVE_MESSAGE)) {
 
             statement.setLong(1, message.getAuthor().getId());
             statement.setLong(2, message.getChatroom().getId());
             statement.setString(3, message.getText());
             statement.setTimestamp(4, Timestamp.valueOf(message.getDate()));
 
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                ResultSet generatedKeys = statement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    long id = generatedKeys.getLong(1);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    long id = resultSet.getLong(1);
                     message.setId(id);
                 }
             }
 
-        } catch (SQLException e) {
+        } catch (NullPointerException | SQLException e) {
+            throw new NotSavedSubEntityException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void update(Message message) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_MESSAGE)) {
+
+            statement.setLong(1, message.getAuthor().getId());
+            statement.setLong(2, message.getChatroom().getId());
+            statement.setString(3, message.getText());
+            statement.setTimestamp(4, message.getDate() != null ? Timestamp.valueOf(message.getDate()) : null);
+            statement.setLong(5, message.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException | NullPointerException e) {
             throw new NotSavedSubEntityException(e.getMessage(), e);
         }
     }

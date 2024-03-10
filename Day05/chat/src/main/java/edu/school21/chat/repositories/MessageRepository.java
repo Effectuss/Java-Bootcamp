@@ -9,4 +9,6 @@ public interface MessageRepository {
     Optional<Message> findById(long id);
 
     void save(Message message);
+
+    void update(Message message);
 }

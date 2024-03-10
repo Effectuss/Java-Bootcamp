@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Setter
 public class Message {
     private Long id;
-    private final User author;
-    private final Chatroom chatroom;
+    private User author;
+    private Chatroom chatroom;
     private String text;
-    private final LocalDateTime date;
+    private LocalDateTime date;
 
     @Override
     public String toString() {
