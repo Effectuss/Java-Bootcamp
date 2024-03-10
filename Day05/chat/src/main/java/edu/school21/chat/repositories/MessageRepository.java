@@ -6,5 +6,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public interface MessageRepository {
-    Optional<Message> findById(long id) throws SQLException;
+    Optional<Message> findById(long id);
+
+    void save(Message message);
 }

@@ -4,39 +4,42 @@ import edu.school21.chat.models.Chatroom;
 import edu.school21.chat.models.Message;
 import edu.school21.chat.models.User;
 import edu.school21.chat.repositories.MessageRepository;
+import edu.school21.chat.repositories.exception.NotSavedSubEntityException;
 import lombok.AllArgsConstructor;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Optional;
 
 @AllArgsConstructor
 public class MessageRepositoryJdbcImpl implements MessageRepository {
 
     private final DataSource dataSource;
+    private static final String FIND_BY_ID_QUERY = """
+                  SELECT
+                    messages.id AS message_id,
+                    messages.text,
+                    messages.message_date,
+                    chatrooms.id AS chatroom_id,
+                    chatrooms.name,
+                    users.id AS user_id,
+                    users.login,
+                    users.password
+                FROM messages
+                JOIN chatrooms ON messages.chatroom_id = chatrooms.id
+                JOIN users ON messages.author_id = users.id
+                WHERE messages.id = ?;
+            """;
+
+    private static final String SAVE_MESSAGE = """
+            INSERT INTO messages (author_id, chatroom_id, text, message_date)
+            VALUES (?, ?, ?, ?);
+            """;
 
     @Override
     public Optional<Message> findById(long id) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     """
-                                   SELECT\s
-                                     messages.id as message_id,\s
-                                     messages.text,
-                                     messages.message_date,
-                                     chatrooms.id as chatroom_id,
-                                     chatrooms.name,
-                                     users.id as user_id,
-                                     users.login,
-                                     users.password
-                                 FROM messages
-                                 JOIN chatrooms ON messages.chatroom_id = chatrooms.id
-                                 JOIN users ON messages.author_id = users.id
-                                 WHERE messages.id = ?;
-                             """)) {
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
             statement.setLong(1, id);
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -64,6 +67,35 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
             }
         } catch (SQLException e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public void save(Message message) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SAVE_MESSAGE, Statement.RETURN_GENERATED_KEYS)) {
+
+            if (message.getAuthor().getId() == null || message.getChatroom().getId() == null) {
+                throw new NotSavedSubEntityException("Author ID or Chatroom ID is null");
+            }
+
+            statement.setLong(1, message.getAuthor().getId());
+            statement.setLong(2, message.getChatroom().getId());
+            statement.setString(3, message.getText());
+            statement.setTimestamp(4, Timestamp.valueOf(message.getDate()));
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                ResultSet generatedKeys = statement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    long id = generatedKeys.getLong(1);
+                    message.setId(id);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new NotSavedSubEntityException(e.getMessage(), e);
         }
     }
 }

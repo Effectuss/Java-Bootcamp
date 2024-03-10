@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Builder
 public class User {
-    private final long id;
+    private final Long id;
     @Setter
     private String login;
     @Setter

@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS user_chatroom CASCADE;
 CREATE TABLE IF NOT EXISTS users
 (
     id       SERIAL PRIMARY KEY,
-    login    VARCHAR(50) NOT NULL,
+    login    VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(50) NOT NULL
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS messages
     author_id    INTEGER NOT NULL,
     chatroom_id  INTEGER NOT NULL,
     text         text    NOT NULL,
-    message_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    message_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT author_id_fk FOREIGN KEY (author_id) REFERENCES users (id),
     CONSTRAINT chatroom_id_fk FOREIGN KEY (chatroom_id) REFERENCES chatrooms (id)
 );

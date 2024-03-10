@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Builder
 public class Chatroom {
-    private final long id;
+    private final Long id;
     @Setter
     private String name;
     @Setter

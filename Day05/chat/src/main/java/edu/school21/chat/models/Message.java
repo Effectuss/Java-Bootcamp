@@ -4,16 +4,26 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@ToString(includeFieldNames=true)
 @EqualsAndHashCode
 @AllArgsConstructor
 @Getter
 @Builder
+@Setter
 public class Message {
-    private final long id;
+    private Long id;
     private final User author;
     private final Chatroom chatroom;
-    @Setter
     private String text;
     private final LocalDateTime date;
+
+    @Override
+    public String toString() {
+        return "Message{\n" +
+                "id=" + id + ",\n" +
+                "author=" + author + ",\n" +
+                "chatroom=" + chatroom + ",\n" +
+                "text='" + text + '\'' + ",\n" +
+                "date=" + date + "\n" +
+                '}';
+    }
 }
