@@ -6,12 +6,14 @@ import edu.school21.chat.models.User;
 import edu.school21.chat.repositories.MessageRepository;
 import edu.school21.chat.repositories.exception.NotSavedSubEntityException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Optional;
 
 @AllArgsConstructor
+@Slf4j
 public class MessageRepositoryJdbcImpl implements MessageRepository {
 
     private final DataSource dataSource;
@@ -75,6 +77,7 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
+            log.error(e.getMessage());
             return Optional.empty();
         }
     }
@@ -106,10 +109,17 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_MESSAGE)) {
 
-            statement.setLong(1, message.getAuthor().getId());
-            statement.setLong(2, message.getChatroom().getId());
-            statement.setString(3, message.getText());
-            statement.setTimestamp(4, message.getDate() != null ? Timestamp.valueOf(message.getDate()) : null);
+
+            statement.setObject(
+                    1, message.getAuthor() != null ? message.getAuthor().getId() : null, Types.BIGINT
+            );
+            statement.setObject(
+                    2, message.getChatroom() != null ? message.getChatroom().getId() : null, Types.BIGINT
+            );
+            statement.setString(3, message.getText() != null ? message.getText() : null);
+            statement.setTimestamp(
+                    4, message.getDate() != null ? Timestamp.valueOf(message.getDate()) : null
+            );
             statement.setLong(5, message.getId());
 
             statement.executeUpdate();

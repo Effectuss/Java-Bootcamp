@@ -7,10 +7,12 @@ import edu.school21.chat.models.Chatroom;
 import edu.school21.chat.models.Message;
 import edu.school21.chat.models.User;
 import edu.school21.chat.repositories.MessageRepository;
+import edu.school21.chat.repositories.exception.NotSavedSubEntityException;
 import edu.school21.chat.repositories.impl.MessageRepositoryJdbcImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class Main {
                 ex03(dataSource);
             }
 
-        } catch (Exception e) {
+        } catch (NotSavedSubEntityException | IOException e) {
             log.error(e.getMessage());
         }
     }
@@ -63,7 +65,8 @@ public class Main {
         Optional<Message> messageOptional = messageRepositoryJdbc.findById(6);
         if (messageOptional.isPresent()) {
             Message message = messageOptional.get();
-            message.setText("Bye");
+            message.setAuthor(new User(5L, "user", "user", new ArrayList<>(), new ArrayList<>()));
+            message.setText(null);
             message.setDate(null);
             messageRepositoryJdbc.update(message);
             System.out.println("################### EX03 ###################");

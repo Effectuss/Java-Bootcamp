@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS chatrooms
 CREATE TABLE IF NOT EXISTS messages
 (
     id           SERIAL PRIMARY KEY,
-    author_id    INTEGER NOT NULL,
-    chatroom_id  INTEGER NOT NULL,
-    text         text    NOT NULL,
+    author_id    INTEGER,
+    chatroom_id  INTEGER,
+    text         text,
     message_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT author_id_fk FOREIGN KEY (author_id) REFERENCES users (id),
     CONSTRAINT chatroom_id_fk FOREIGN KEY (chatroom_id) REFERENCES chatrooms (id)
