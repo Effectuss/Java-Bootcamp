@@ -33,6 +33,7 @@ public class Main {
                 ex01(dataSource);
                 ex02(dataSource);
                 ex03(dataSource);
+                ex04(dataSource);
             }
 
         } catch (NotSavedSubEntityException | IOException e) {
@@ -72,5 +73,9 @@ public class Main {
             System.out.println("################### EX03 ###################");
             System.out.println(messageRepositoryJdbc.findById(6));
         }
+    }
+
+    private static void ex04(DataSource dataSource) {
+
     }
 }
