@@ -28,8 +28,8 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
                 users.login,
                 users.password
             FROM messages
-            JOIN chatrooms ON messages.chatroom_id = chatrooms.id
-            JOIN users ON messages.author_id = users.id
+            LEFT JOIN chatrooms ON messages.chatroom_id = chatrooms.id
+            LEFT JOIN users ON messages.author_id = users.id
             WHERE messages.id = ?;
             """;
 
@@ -59,10 +59,15 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
                             .password(resultSet.getString("password"))
                             .build();
 
+                    // если поиск делается после update message и айдишник пользователя поставили в null
+                    if (resultSet.getLong("user_id") == 0) {
+                        sender = null;
+                    }
+
                     return Optional.of(Message.builder()
                             .id(resultSet.getLong("message_id"))
                             .author(sender)
-                            .chatroom(Chatroom.builder()
+                            .chatroom(resultSet.getLong("chatroom_id") == 0 ? null : Chatroom.builder()
                                     .id(resultSet.getLong("chatroom_id"))
                                     .name(resultSet.getString("name"))
                                     .owner(null)
@@ -109,6 +114,9 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_MESSAGE)) {
 
+            if(message.getId() == null) {
+                throw new NotSavedSubEntityException("The primary key 'id', cant be null!!!");
+            }
 
             statement.setObject(
                     1, message.getAuthor() != null ? message.getAuthor().getId() : null, Types.BIGINT

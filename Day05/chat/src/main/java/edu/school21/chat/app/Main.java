@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -65,9 +64,10 @@ public class Main {
         Optional<Message> messageOptional = messageRepositoryJdbc.findById(6);
         if (messageOptional.isPresent()) {
             Message message = messageOptional.get();
-            message.setAuthor(new User(5L, "user", "user", new ArrayList<>(), new ArrayList<>()));
-            message.setText(null);
+            message.setText("Bye, bye!");
             message.setDate(null);
+            message.setChatroom(null);
+            message.setAuthor(null);
             messageRepositoryJdbc.update(message);
             System.out.println("################### EX03 ###################");
             System.out.println(messageRepositoryJdbc.findById(6));
