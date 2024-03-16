@@ -33,13 +33,13 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
             WHERE messages.id = ?;
             """;
 
-    private static final String SAVE_MESSAGE = """
+    private static final String SAVE_MESSAGE_QUERY = """
             INSERT INTO messages (author_id, chatroom_id, text, message_date)
             VALUES (?, ?, ?, ?)
             RETURNING id;
             """;
 
-    private static final String UPDATE_MESSAGE = """
+    private static final String UPDATE_MESSAGE_QUERY = """
             UPDATE messages SET author_id = ?,  chatroom_id = ?, text = ?, message_date = ?
             WHERE id = ?;
             """;
@@ -90,7 +90,7 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
     @Override
     public void save(Message message) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SAVE_MESSAGE)) {
+             PreparedStatement statement = connection.prepareStatement(SAVE_MESSAGE_QUERY)) {
 
             statement.setLong(1, message.getAuthor().getId());
             statement.setLong(2, message.getChatroom().getId());
@@ -112,7 +112,7 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
     @Override
     public void update(Message message) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_MESSAGE)) {
+             PreparedStatement statement = connection.prepareStatement(UPDATE_MESSAGE_QUERY)) {
 
             if(message.getId() == null) {
                 throw new NotSavedSubEntityException("The primary key 'id', cant be null!!!");
