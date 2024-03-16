@@ -9,6 +9,7 @@ VALUES ('admin', 'admin'),
 
 INSERT INTO chatrooms (name, owner_id)
 VALUES ('board_games', 5),
+       ('Duna', 1),
        ('Java', 2),
        ('ADM', 1),
        ('music_club', 6),
@@ -21,61 +22,39 @@ VALUES (1, 1, 'Hello'),
        (4, 2, 'Hi, guys'),
        (5, 2, 'I''m fine'),
        (1, 2, 'I''m ok'),
-       (4, 2,'Bye!');
+       (4, 2, 'Bye!'),
+       (4, 2, 'Hahahah');
 
 INSERT INTO user_chatroom (user_id, chatroom_id)
 SELECT DISTINCT messages.author_id, messages.chatroom_id
 FROM messages;
 
-
-WITH need_users AS (
-    SELECT id, login
-    FROM users
-    ORDER BY id
-    LIMIT ? OFFSET ?
-)
-SELECT u.id AS user_id,
-       u.login AS user_name,
-       array_agg(c.id) AS created_chat_id,
-       array_agg(c.name) AS created_chat_name,
-       array_agg(uc.chatroom_id) AS used_chat_ids,
-       array_agg(cc.name) AS used_chat_names
-FROM need_users u
-         LEFT JOIN chatrooms c ON u.id = c.owner_id
-         LEFT JOIN user_chatroom uc ON uc.user_id = u.id
-         LEFT JOIN chatrooms cc ON cc.id = uc.chatroom_id
-GROUP BY u.id, u.login, c.id, c.name
-ORDER BY u.id, c.id;
-
-
-
-WITH need_users AS (
-    SELECT id, login
-    FROM users
-    ORDER BY id
-    LIMIT ? OFFSET ?
-)
-SELECT u.id AS user_id,
-       u.login AS user_name,
-       array_agg(DISTINCT c.id) AS created_chat_id,
-       array_agg(DISTINCT c.name) AS created_chat_name,
-       array_agg(DISTINCT uc.chatroom_id) AS used_chat_ids,
-       array_agg(DISTINCT cc.name) AS used_chat_names
-FROM need_users u
-         LEFT JOIN (
-    SELECT id, owner_id, name
-    FROM chatrooms
-    GROUP BY id, owner_id, name
-) c ON u.id = c.owner_id
-         LEFT JOIN (
-    SELECT user_id, chatroom_id
-    FROM user_chatroom
-    GROUP BY user_id, chatroom_id
-) uc ON uc.user_id = u.id
-         LEFT JOIN (
-    SELECT id, name
-    FROM chatrooms
-    GROUP BY id, name
-) cc ON cc.id = uc.chatroom_id
-GROUP BY u.id, u.login
-ORDER BY u.id;
+WITH need_users AS (SELECT id, login
+                    FROM users
+                    ORDER BY id
+                    LIMIT ? OFFSET ?),
+     created_chats AS (SELECT u.id              AS user_id,
+                              u.login           AS user_name,
+                              array_agg(c.id)   AS created_chat_id,
+                              array_agg(c.name) AS created_chat_name
+                       FROM need_users u
+                                LEFT JOIN chatrooms c ON u.id = c.owner_id
+                       GROUP BY u.id, u.login),
+     used_chats AS (SELECT u.id               AS user_id,
+                           u.login            AS user_name,
+                           array_agg(cc.id)   AS used_chat_ids,
+                           array_agg(cr.name) AS used_chat_names
+                    FROM need_users u
+                             LEFT JOIN user_chatroom uc ON u.id = uc.user_id
+                             LEFT JOIN chatrooms cc ON uc.chatroom_id = cc.id
+                             LEFT JOIN chatrooms cr ON uc.chatroom_id = cr.id
+                    GROUP BY u.id, u.login)
+SELECT c.user_id,
+       c.user_name,
+       c.created_chat_id,
+       c.created_chat_name,
+       u.used_chat_ids,
+       u.used_chat_names
+FROM created_chats c
+         LEFT JOIN used_chats u ON c.user_id = u.user_id
+ORDER BY c.user_id;
