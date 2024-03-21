@@ -1,11 +1,13 @@
 package edu.school21.chat.repositories.impl;
 
+import edu.school21.chat.models.Chatroom;
 import edu.school21.chat.models.User;
 import edu.school21.chat.repositories.UserRepository;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserRepositoryJdbcImpl implements UserRepository {
@@ -49,19 +51,61 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
     @Override
     public List<User> findAll(int page, int size) throws SQLException {
+        List<User> users = new ArrayList<>();
+
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_ALL_QUERY)) {
             int offset = page * size;
             statement.setInt(1, size);
             statement.setInt(2, offset);
 
-            try (ResultSet resultSet = statement.getResultSet()) {
-                List<User> users = new ArrayList<>();
+            try (ResultSet resultSet = statement.executeQuery()) {
 
                 while (resultSet.next()) {
+                    User user = User.builder()
+                            .id(resultSet.getLong("user_id"))
+                            .login(resultSet.getString("user_name"))
+                            .createdRooms(getCreatedRooms(resultSet))
+                            .usedRooms(getUsedRooms(resultSet))
+                            .build();
+
+                    users.add(user);
                 }
             }
         }
-        return null;
+
+        return users;
+    }
+
+    private List<Chatroom> getCreatedRooms(ResultSet resultSet) throws SQLException {
+        return getRoomsFromResultSet(resultSet, "created_chat_id", "created_chat_name");
+    }
+
+    private List<Chatroom> getUsedRooms(ResultSet resultSet) throws SQLException {
+        return getRoomsFromResultSet(resultSet, "used_chat_ids", "used_chat_names");
+    }
+
+    private List<Chatroom> getRoomsFromResultSet(ResultSet resultSet, String idColumn, String nameColumn)
+            throws SQLException {
+        Array idsArray = resultSet.getArray(idColumn);
+        Array namesArray = resultSet.getArray(nameColumn);
+
+        if (idsArray == null || namesArray == null) {
+            return Collections.emptyList();
+        }
+
+        Integer[] ids = (Integer[]) idsArray.getArray();
+        String[] names = (String[]) namesArray.getArray();
+
+        List<Chatroom> rooms = new ArrayList<>();
+        for (int i = 0; i < ids.length; i++) {
+            rooms.add(Chatroom.builder()
+                    .id(ids[i] == null ? null : Long.valueOf(ids[i]))
+                    .owner(null) // в задание сказано что каждая подсущность не должна включать свои зависимости
+                    .name(names[i])
+                    .build());
+        }
+
+        return rooms;
     }
 }

@@ -7,14 +7,18 @@ import edu.school21.chat.models.Chatroom;
 import edu.school21.chat.models.Message;
 import edu.school21.chat.models.User;
 import edu.school21.chat.repositories.MessageRepository;
+import edu.school21.chat.repositories.UserRepository;
 import edu.school21.chat.repositories.exception.NotSavedSubEntityException;
 import edu.school21.chat.repositories.impl.MessageRepositoryJdbcImpl;
+import edu.school21.chat.repositories.impl.UserRepositoryJdbcImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -36,7 +40,7 @@ public class Main {
                 ex04(dataSource);
             }
 
-        } catch (NotSavedSubEntityException | IOException e) {
+        } catch (NotSavedSubEntityException | IOException | SQLException e) {
             log.error(e.getMessage());
         }
     }
@@ -75,7 +79,13 @@ public class Main {
         }
     }
 
-    private static void ex04(DataSource dataSource) {
+    private static void ex04(DataSource dataSource) throws SQLException {
+        UserRepository userRepositoryJdbc = new UserRepositoryJdbcImpl(dataSource);
 
+        List<User> users = userRepositoryJdbc.findAll(0, 7);
+
+        for(User user : users) {
+            System.out.println(user);
+        }
     }
 }

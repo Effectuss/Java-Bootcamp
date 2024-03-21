@@ -15,6 +15,6 @@ public class User {
     private String login;
     @Setter
     private String password;
-    private List<Chatroom> rooms;
+    private List<Chatroom> usedRooms;
     private List<Chatroom> createdRooms;
 }
