@@ -1,4 +1,4 @@
-package edu.school21;
+package edu.school21.numbers;
 
 import edu.school21.numbers.NumberWorker;
 import edu.school21.numbers.exception.IllegalNumberException;
