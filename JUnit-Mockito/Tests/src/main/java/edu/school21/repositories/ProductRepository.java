@@ -1,4 +1,4 @@
-package repositories;
+package edu.school21.repositories;
 
 import edu.school21.models.Product;
 
