@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.school21</groupId>
-    <artifactId>orm</artifactId>
+    <artifactId>annotations</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>orm</name>
+    <name>annotations</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -29,7 +29,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>edu.school21.Main</mainClass>
+                            <mainClass>edu.school21.ex01.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
