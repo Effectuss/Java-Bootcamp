@@ -12,9 +12,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class ReflectionManager {
+public final class ReflectionClassHelper {
 
-    private ReflectionManager() {
+    private ReflectionClassHelper() {
     }
 
     public static Set<Class<?>> getAllClassesFromPackage(@NonNull String packageName) {
@@ -46,5 +46,16 @@ public final class ReflectionManager {
             throw new ReflectionManagerException("Class not found: " + packageName + "." + className, e);
         }
     }
+
+    public static Set<String> getClassSimpleNameSet(Set<Class<?>> classes) {
+        return classes.stream().map(Class::getSimpleName).collect(Collectors.toSet());
+    }
+
+    public static Optional<Class<?>> findClassBySimpleName(Set<Class<?>> classes, String classSimpleName) {
+        return classes.stream()
+                .filter(clazz -> clazz.getSimpleName().equals(classSimpleName))
+                .findFirst();
+    }
+
 }
 
