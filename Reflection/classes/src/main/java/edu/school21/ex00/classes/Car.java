@@ -1,4 +1,4 @@
-package edu.school21.ex00.car;
+package edu.school21.ex00.classes;
 
 import java.util.StringJoiner;
 
