@@ -1,8 +1,8 @@
 package edu.school21.ex00.reflection;
 
 import edu.school21.ex00.reflection.exception.ReflectionManagerException;
+import lombok.NonNull;
 
-import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,10 +15,9 @@ import java.util.stream.Collectors;
 public final class ReflectionManager {
 
     private ReflectionManager() {
-
     }
 
-    public static Set<Class<?>> getAllClassesFromPackage(@Nonnull String packageName) {
+    public static Set<Class<?>> getAllClassesFromPackage(@NonNull String packageName) {
         String path = packageName.replace('.', '/');
         Optional<InputStream> inputStream = Optional.ofNullable(
                 ClassLoader.getSystemClassLoader().getResourceAsStream(path)
@@ -39,7 +38,7 @@ public final class ReflectionManager {
         }
     }
 
-    private static Class<?> getClass(String className, @Nonnull String packageName) {
+    private static Class<?> getClass(String className, @NonNull String packageName) {
         try {
             return Class.forName(packageName + "."
                     + className.substring(0, className.lastIndexOf('.')));
