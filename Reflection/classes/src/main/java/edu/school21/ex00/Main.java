@@ -3,6 +3,8 @@ package edu.school21.ex00;
 import edu.school21.ex00.reflection.ReflectionClassHelper;
 import edu.school21.ex00.reflection.ReflectionFieldHelper;
 import edu.school21.ex00.reflection.ReflectionMethodHelper;
+import edu.school21.ex00.util.MethodSignatureParser;
+import edu.school21.ex00.util.ParameterTypeConverter;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
@@ -107,8 +109,27 @@ public class Main {
             printWriter.println("Object updated: " + instance + "\n" + LINE_SEPARATOR + "\n" + PROMPT_MSG_CALL_METHOD);
             scanner.nextLine();
 
-            String methodName = scanner.nextLine();
+            String methodSignature = scanner.nextLine();
+            String methodName = MethodSignatureParser.extractMethodName(methodSignature);
+            List<String> methodsParameterTypes = MethodSignatureParser.extractParameterTypes(methodSignature);
 
+            Class<?>[] parameterTypes =
+                    ParameterTypeConverter.convertListParameterTypeSimpleNameToClassArray(methodsParameterTypes);
+
+            Method selectedMethod = instance.getClass().getMethod(methodName, parameterTypes);
+
+            List<Object> methodParams = new ArrayList<>();
+            for (Class<?> paramType : selectedMethod.getParameterTypes()) {
+                printWriter.printf(PROMPT_ENTER_PARAM_VALUE + "\n", paramType.getSimpleName());
+                printWriter.flush();
+                methodParams.add(readObjectFromCmd(scanner));
+            }
+            Object returnValue = selectedMethod.invoke(instance, methodParams.toArray());
+            if (selectedMethod.getReturnType() != void.class) {
+                printWriter.println("Method returned: " + returnValue);
+            }
+
+            printWriter.println(instance);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
