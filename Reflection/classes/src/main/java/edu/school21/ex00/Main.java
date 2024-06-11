@@ -28,11 +28,13 @@ public class Main {
 
     private static final String METHODS = "Methods:\n";
 
-    private static final String PROMP_MSG_CREATE_OBJ = "Let's create an object.";
+    private static final String PROMPT_MSG_CREATE_OBJ = "Let's create an object.";
 
-    private static final String PROMP_MSG_CHANGE_FIELD = "Enter name of the field for changing:";
+    private static final String PROMPT_MSG_CHANGE_FIELD = "Enter name of the field for changing:";
 
-    private static final String PROMP_MSG_VALUE = "Enter %s value:";
+    private static final String PROMPT_ENTER_PARAM_VALUE = "Enter %s value:";
+
+    private static final String PROMPT_MSG_CALL_METHOD = "Enter name of the method for call:";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -75,7 +77,7 @@ public class Main {
                         .append(";\n");
             }
 
-            stringBuilder.append(LINE_SEPARATOR).append("\n").append(PROMP_MSG_CREATE_OBJ);
+            stringBuilder.append(LINE_SEPARATOR).append("\n").append(PROMPT_MSG_CREATE_OBJ);
 
             printWriter.println(stringBuilder);
 
@@ -92,17 +94,20 @@ public class Main {
 
             Object instance = constructor.newInstance(objects.toArray());
 
-            printWriter.println("Object created: " + instance + "\n" + LINE_SEPARATOR + "\n" + PROMP_MSG_CHANGE_FIELD);
+            printWriter.println("Object created: " + instance + "\n" + LINE_SEPARATOR + "\n" + PROMPT_MSG_CHANGE_FIELD);
             scanner.nextLine();
 
             String fieldName = scanner.nextLine();
 
             var selectedField = instance.getClass().getDeclaredField(fieldName);
-            printWriter.printf(PROMP_MSG_VALUE + "\n", selectedField.getType().getSimpleName());
+            printWriter.printf(PROMPT_ENTER_PARAM_VALUE + "\n", selectedField.getType().getSimpleName());
 
             ReflectionFieldHelper.changePrivateField(selectedField, instance, readObjectFromCmd(scanner));
 
-            printWriter.println("Object updated: " + instance + "\n" + LINE_SEPARATOR);
+            printWriter.println("Object updated: " + instance + "\n" + LINE_SEPARATOR + "\n" + PROMPT_MSG_CALL_METHOD);
+            scanner.nextLine();
+
+            String methodName = scanner.nextLine();
 
         } catch (Exception e) {
             System.err.println(e.getMessage());

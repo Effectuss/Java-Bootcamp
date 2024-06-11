@@ -1,5 +1,7 @@
 package edu.school21.ex00.classes;
 
+import lombok.NonNull;
+
 import java.util.StringJoiner;
 
 public class Car {
@@ -23,12 +25,17 @@ public class Car {
     }
 
     public long changePrice(long changeValue) {
-        if (changeValue < 0 && Math.abs(changeValue) >= carPrice) {
+        if (changeValue < 0 || Math.abs(changeValue) >= carPrice) {
             throw new IllegalArgumentException("The change value cant be less then car price!");
         }
 
         carPrice += changeValue;
         return carPrice;
+    }
+
+    public void changeBrandAndModel(@NonNull String carBrand, @NonNull String carModel) {
+        this.carBrand = carBrand;
+        this.carModel = carModel;
     }
 
     @Override
