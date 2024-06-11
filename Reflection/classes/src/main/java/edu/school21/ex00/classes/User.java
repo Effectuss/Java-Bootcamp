@@ -4,7 +4,9 @@ import java.util.StringJoiner;
 
 public class User {
     private String firstName;
+
     private String lastName;
+
     private int height;
 
     public User() {

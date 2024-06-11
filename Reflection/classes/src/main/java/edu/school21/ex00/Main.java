@@ -1,16 +1,23 @@
 package edu.school21.ex00;
 
+import edu.school21.ex00.classes.Car;
+import edu.school21.ex00.classes.User;
 import edu.school21.ex00.reflection.ReflectionClassHelper;
 import edu.school21.ex00.reflection.ReflectionFieldHelper;
 import edu.school21.ex00.reflection.ReflectionMethodHelper;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     private static final String LINE_SEPARATOR = "-------------------------";
@@ -19,7 +26,7 @@ public class Main {
 
     private static final String ENTER_CLASS_NAME = "Enter class name:";
 
-    private static final String CLASS_DOES_NOT_EXIST = "Class '%s.class' does not exist!";
+    private static final String ERROR_CLASS_DOES_NOT_EXIST = "Class '%s.class' does not exist!";
 
     private static final String FIELDS = "Fields:\n";
 
@@ -38,21 +45,21 @@ public class Main {
             classSimpleNames.forEach(printWriter::println);
             printWriter.println(LINE_SEPARATOR + "\n" + ENTER_CLASS_NAME);
 
-            String inputClassName = scanner.nextLine();
+            String inputLine = scanner.nextLine();
 
-            if (!classSimpleNames.contains(inputClassName)) {
-                throw new IllegalArgumentException(String.format(CLASS_DOES_NOT_EXIST, inputClassName));
+            if (!classSimpleNames.contains(inputLine)) {
+                throw new IllegalArgumentException(String.format(ERROR_CLASS_DOES_NOT_EXIST, inputLine));
             }
 
-            Optional<Class<?>> clazz = ReflectionClassHelper.findClassBySimpleName(classes, inputClassName);
+            Optional<Class<?>> clazz = ReflectionClassHelper.findClassBySimpleName(classes, inputLine);
 
-            var allDeclaredClassField = ReflectionFieldHelper.getAllDeclaredField(clazz.orElseThrow());
+            var allDeclaredClassFields = ReflectionFieldHelper.getAllDeclaredField(clazz.orElseThrow());
 
             StringBuilder stringBuilder = new StringBuilder();
 
             stringBuilder.append(LINE_SEPARATOR).append("\n").append(FIELDS);
 
-            for (Field field : allDeclaredClassField) {
+            for (Field field : allDeclaredClassFields) {
                 stringBuilder.append(field.getType().getSimpleName()).append(" ").append(field.getName()).append(";\n");
             }
 
@@ -72,6 +79,34 @@ public class Main {
 
             printWriter.println(stringBuilder);
 
+            Constructor<?> constructor = clazz.orElseThrow().getConstructor(
+                    ReflectionFieldHelper.getParametersType(allDeclaredClassFields)
+            );
+
+            List<Object> objects = new ArrayList<>();
+
+            for (Field field : allDeclaredClassFields) {
+                printWriter.println(field.getName());
+                Object obj;
+
+                if (scanner.hasNextBoolean()) {
+                    obj = scanner.nextBoolean();
+                } else if (scanner.hasNextInt()) {
+                    obj = scanner.nextInt();
+                } else if (scanner.hasNextDouble()) {
+                    obj = scanner.nextDouble();
+                } else if (scanner.hasNextLong()) {
+                    obj = scanner.nextLong();
+                } else {
+                    obj = scanner.nextLine();
+                }
+
+                objects.add(obj);
+            }
+
+            Object instance = constructor.newInstance(objects.toArray());
+
+            System.out.println("Object created: " + instance);
 
         } catch (Exception e) {
             System.err.println(e.getMessage());

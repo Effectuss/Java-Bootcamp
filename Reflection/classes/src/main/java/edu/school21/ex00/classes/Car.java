@@ -33,7 +33,7 @@ public class Car {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Car.class.getName() + "[", "]")
+        return new StringJoiner(", ", Car.class.getSimpleName() + "[", "]")
                 .add("carBrand='" + carBrand + "'")
                 .add("carModel='" + carModel + "'")
                 .add("isLeftHandDrive='" + isLeftHandDrive + "'")
