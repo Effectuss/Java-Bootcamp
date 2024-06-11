@@ -1,7 +1,5 @@
 package edu.school21.ex00;
 
-import edu.school21.ex00.classes.Car;
-import edu.school21.ex00.classes.User;
 import edu.school21.ex00.reflection.ReflectionClassHelper;
 import edu.school21.ex00.reflection.ReflectionFieldHelper;
 import edu.school21.ex00.reflection.ReflectionMethodHelper;
@@ -14,10 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Main {
     private static final String LINE_SEPARATOR = "-------------------------";
@@ -34,6 +30,10 @@ public class Main {
 
     private static final String PROMP_MSG_CREATE_OBJ = "Let's create an object.";
 
+    private static final String PROMP_MSG_CHANGE_FIELD = "Enter name of the field for changing:";
+
+    private static final String PROMP_MSG_VALUE = "Enter %s value:";
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         PrintWriter printWriter = new PrintWriter(System.out, true, StandardCharsets.UTF_8);
@@ -45,13 +45,13 @@ public class Main {
             classSimpleNames.forEach(printWriter::println);
             printWriter.println(LINE_SEPARATOR + "\n" + ENTER_CLASS_NAME);
 
-            String inputLine = scanner.nextLine();
+            String classSimpleName = scanner.nextLine();
 
-            if (!classSimpleNames.contains(inputLine)) {
-                throw new IllegalArgumentException(String.format(ERROR_CLASS_DOES_NOT_EXIST, inputLine));
+            if (!classSimpleNames.contains(classSimpleName)) {
+                throw new IllegalArgumentException(String.format(ERROR_CLASS_DOES_NOT_EXIST, classSimpleName));
             }
 
-            Optional<Class<?>> clazz = ReflectionClassHelper.findClassBySimpleName(classes, inputLine);
+            Optional<Class<?>> clazz = ReflectionClassHelper.findClassBySimpleName(classes, classSimpleName);
 
             var allDeclaredClassFields = ReflectionFieldHelper.getAllDeclaredField(clazz.orElseThrow());
 
@@ -87,29 +87,43 @@ public class Main {
 
             for (Field field : allDeclaredClassFields) {
                 printWriter.println(field.getName());
-                Object obj;
-
-                if (scanner.hasNextBoolean()) {
-                    obj = scanner.nextBoolean();
-                } else if (scanner.hasNextInt()) {
-                    obj = scanner.nextInt();
-                } else if (scanner.hasNextDouble()) {
-                    obj = scanner.nextDouble();
-                } else if (scanner.hasNextLong()) {
-                    obj = scanner.nextLong();
-                } else {
-                    obj = scanner.nextLine();
-                }
-
-                objects.add(obj);
+                objects.add(readObjectFromCmd(scanner));
             }
 
             Object instance = constructor.newInstance(objects.toArray());
 
-            System.out.println("Object created: " + instance);
+            printWriter.println("Object created: " + instance + "\n" + LINE_SEPARATOR + "\n" + PROMP_MSG_CHANGE_FIELD);
+            scanner.nextLine();
+
+            String fieldName = scanner.nextLine();
+
+            var selectedField = instance.getClass().getDeclaredField(fieldName);
+            printWriter.printf(PROMP_MSG_VALUE + "\n", selectedField.getType().getSimpleName());
+
+            ReflectionFieldHelper.changePrivateField(selectedField, instance, readObjectFromCmd(scanner));
+
+            printWriter.println("Object updated: " + instance + "\n" + LINE_SEPARATOR);
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    private static Object readObjectFromCmd(Scanner scanner) {
+        Object obj;
+
+        if (scanner.hasNextBoolean()) {
+            obj = scanner.nextBoolean();
+        } else if (scanner.hasNextInt()) {
+            obj = scanner.nextInt();
+        } else if (scanner.hasNextDouble()) {
+            obj = scanner.nextDouble();
+        } else if (scanner.hasNextLong()) {
+            obj = scanner.nextLong();
+        } else {
+            obj = scanner.nextLine();
+        }
+
+        return obj;
     }
 }

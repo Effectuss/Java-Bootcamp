@@ -1,10 +1,11 @@
 package edu.school21.ex00.reflection;
 
+import edu.school21.ex00.reflection.exception.ReflectionManagerException;
+import lombok.NonNull;
+
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class ReflectionFieldHelper {
 
@@ -12,10 +13,16 @@ public final class ReflectionFieldHelper {
     }
 
     public static List<Field> getAllDeclaredField(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredFields()).collect(Collectors.toList());
+        return Arrays.stream(clazz.getDeclaredFields()).toList();
     }
 
     public static Class<?>[] getParametersType(List<Field> fields) {
         return fields.stream().map(Field::getType).toArray(Class[]::new);
+    }
+
+    public static void changePrivateField(@NonNull Field field, Object obj, Object value)
+            throws IllegalAccessException {
+        field.setAccessible(true);
+        field.set(obj, value);
     }
 }

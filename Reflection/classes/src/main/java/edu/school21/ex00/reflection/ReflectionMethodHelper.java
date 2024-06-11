@@ -14,7 +14,7 @@ public final class ReflectionMethodHelper {
     public static Set<Method> getPublicMethodsExcludingToString(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> Modifier.isPublic(method.getModifiers()))
-                .filter(method -> !method.getName().equals("toString"))
+                .filter(method -> !"toString".equals(method.getName()))
                 .collect(Collectors.toSet());
     }
 }
