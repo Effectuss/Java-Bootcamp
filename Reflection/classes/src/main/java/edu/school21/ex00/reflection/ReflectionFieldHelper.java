@@ -1,6 +1,5 @@
 package edu.school21.ex00.reflection;
 
-import edu.school21.ex00.reflection.exception.ReflectionManagerException;
 import lombok.NonNull;
 
 import java.lang.reflect.Field;

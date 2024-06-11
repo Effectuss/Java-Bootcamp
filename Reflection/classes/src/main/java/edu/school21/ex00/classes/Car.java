@@ -25,8 +25,8 @@ public class Car {
     }
 
     public long changePrice(long changeValue) {
-        if (changeValue < 0 || Math.abs(changeValue) >= carPrice) {
-            throw new IllegalArgumentException("The change value cant be less then car price!");
+        if (changeValue < 0) {
+            throw new IllegalArgumentException("The change value cant be negative!");
         }
 
         carPrice += changeValue;

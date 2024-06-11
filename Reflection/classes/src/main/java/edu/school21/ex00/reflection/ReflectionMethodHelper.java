@@ -3,18 +3,17 @@ package edu.school21.ex00.reflection;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public final class ReflectionMethodHelper {
 
     private ReflectionMethodHelper() {
     }
 
-    public static Set<Method> getPublicMethodsExcludingToString(Class<?> clazz) {
+    public static List<Method> getPublicMethodsExcludingToString(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> Modifier.isPublic(method.getModifiers()))
                 .filter(method -> !"toString".equals(method.getName()))
-                .collect(Collectors.toSet());
+                .toList();
     }
 }
