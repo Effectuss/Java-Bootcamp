@@ -1,5 +1,8 @@
 package edu.school21;
 
+import edu.school21.annotations.HtmlForm;
+import edu.school21.annotations.HtmlInput;
+
 @HtmlForm(fileName = "user_form.html", action = "/users", method = "post")
 public class UserForm {
     @HtmlInput(type = "text", name = "first_name", placeholder = "Enter First Name")
