@@ -1,4 +1,4 @@
-package edu.school21.ex01.annotations;
+package edu.school21;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
-public @interface HtmlInput {
-    String type();
+@Target(ElementType.TYPE)
+public @interface HtmlForm {
+    String fileName();
 
-    String name();
+    String action();
 
-    String placeholder();
+    String method();
 }

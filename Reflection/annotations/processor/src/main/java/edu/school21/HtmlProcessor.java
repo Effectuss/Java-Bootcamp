@@ -1,4 +1,4 @@
-package edu.school21.ex01.processors;
+package edu.school21;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
