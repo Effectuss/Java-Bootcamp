@@ -18,13 +18,17 @@ import java.util.Set;
 @Slf4j
 public final class OrmManager implements AutoCloseable {
     private static final String DROP_TABLE_QUERY = "DROP TABLE IF EXISTS ";
+
     private final Connection connection;
+    private final List<Class<?>> ormAnnotatedEntities;
+    private final List<String> entityTableName;
 
     public OrmManager(DataSource dataSource, String entityPackageName) throws OrmManagerException {
         try {
             this.connection = dataSource.getConnection();
-            var ormAnnotatedEntities = getOrmEntities(entityPackageName);
-            dropEntityTables(ormAnnotatedEntities);
+            this.ormAnnotatedEntities = getOrmEntities(entityPackageName);
+            this.entityTableName = getEntityTableNames(this.ormAnnotatedEntities);
+            dropEntityTables();
             initialize();
         } catch (Exception e) {
             throw new OrmManagerException("The ORM manager can't be created: " + e.getMessage(), e);
@@ -37,9 +41,9 @@ public final class OrmManager implements AutoCloseable {
         return new ArrayList<>(annotatedClasses);
     }
 
-    private void dropEntityTables(List<Class<?>> ormAnnotatedEntities) throws SQLException {
+    private void dropEntityTables() throws SQLException {
         try (Statement statement = connection.createStatement()) {
-            for (String tableName : getEntityTableNames(ormAnnotatedEntities)) {
+            for (String tableName : entityTableName) {
                 String sql = DROP_TABLE_QUERY + tableName + ";";
                 log.info(sql);
                 statement.addBatch(sql);
