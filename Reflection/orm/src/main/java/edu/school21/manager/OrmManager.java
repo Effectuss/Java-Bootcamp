@@ -48,6 +48,7 @@ public final class OrmManager implements AutoCloseable {
     @Override
     public void close() throws Exception {
         if (connection != null && !connection.isClosed()) {
+            connection.rollback();
             connection.close();
         }
     }

@@ -8,6 +8,8 @@ import edu.school21.entities.User;
 import edu.school21.manager.OrmManager;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 @Slf4j
 public class Main {
     public static void main(String[] args) {
@@ -19,18 +21,26 @@ public class Main {
             try (HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
                  OrmManager ormManager = new OrmManager(hikariDataSource)) {
 
-                User user = new User(1L, "asd", "asd", 3);
+                User firstUser = new User(1L, "Ivan", "Ivanov", 33);
+                User secondUser = new User(2L, "Sava", "Panov", 26);
 
-                System.out.println(user.getFirstName());
-                String fieldName = "firstName";
+                ormManager.begin();
 
-                OrmColumn ormColumn = User.class.getDeclaredField(fieldName).getAnnotation(OrmColumn.class);
+                ormManager.save(firstUser);
+                ormManager.save(secondUser);
 
-                if (ormColumn != null) {
-                    System.out.println("Column name: " + ormColumn.name());
+                firstUser.setAge(150);
+
+                ormManager.update(firstUser);
+
+                User foundUser = ormManager.findById(1L, User.class);
+                if (foundUser != null) {
+                    log.info(foundUser.toString());
                 } else {
-                    System.out.println("No OrmColumn annotation found on field: " + fieldName);
+                    log.info("The object not found!");
                 }
+
+                ormManager.commit();
             }
         } catch (Exception e) {
             log.error(e.getMessage());
