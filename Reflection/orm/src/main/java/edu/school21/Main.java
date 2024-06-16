@@ -2,13 +2,13 @@ package edu.school21;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import edu.school21.annotations.OrmColumn;
 import edu.school21.db.DbConfig;
 import edu.school21.entities.User;
 import edu.school21.manager.OrmManager;
+import edu.school21.manager.exception.OrmManagerException;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Objects;
+import java.io.IOException;
 
 @Slf4j
 public class Main {
@@ -19,7 +19,7 @@ public class Main {
             HikariConfig hikariConfig = configureHikari(dbConfig);
 
             try (HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
-                 OrmManager ormManager = new OrmManager(hikariDataSource)) {
+                 OrmManager ormManager = new OrmManager(hikariDataSource, "edu.school21.entities")) {
 
                 User firstUser = new User(1L, "Ivan", "Ivanov", 33);
                 User secondUser = new User(2L, "Sava", "Panov", 26);
@@ -30,10 +30,10 @@ public class Main {
                 ormManager.save(secondUser);
 
                 firstUser.setAge(150);
-
                 ormManager.update(firstUser);
 
                 User foundUser = ormManager.findById(1L, User.class);
+
                 if (foundUser != null) {
                     log.info(foundUser.toString());
                 } else {
@@ -42,6 +42,7 @@ public class Main {
 
                 ormManager.commit();
             }
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }
