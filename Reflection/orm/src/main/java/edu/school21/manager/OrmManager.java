@@ -22,7 +22,7 @@ public final class OrmManager implements AutoCloseable {
 
     private static final String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS ";
 
-    private static final String INSERT_QUERY = "INSERT_INTO ";
+    private static final String INSERT_QUERY = "INSERT INTO ";
     private final Connection connection;
     private final List<Class<?>> ormAnnotatedEntities;
 
@@ -111,7 +111,7 @@ public final class OrmManager implements AutoCloseable {
         OrmEntity ormEntity = clazz.getAnnotation(OrmEntity.class);
 
         if (ormEntity != null) {
-            StringBuilder sql = new StringBuilder("INSERT INTO " + ormEntity.table() + " (");
+            StringBuilder sql = new StringBuilder(INSERT_QUERY + ormEntity.table() + " (");
             StringBuilder values = new StringBuilder(" VALUES (");
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
