@@ -12,6 +12,7 @@ import org.reflections.scanners.Scanners;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public final class OrmManager implements AutoCloseable {
 
     private static final String CREATE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS ";
 
+    private static final String INSERT_QUERY = "INSERT_INTO ";
     private final Connection connection;
     private final List<Class<?>> ormAnnotatedEntities;
 
@@ -31,9 +33,12 @@ public final class OrmManager implements AutoCloseable {
         try {
             this.connection = dataSource.getConnection();
             this.ormAnnotatedEntities = getOrmEntities(entityPackageName);
+            begin();
             dropEntityTables();
             createEntityTables();
+            commit();
         } catch (Exception e) {
+            rollback();
             throw new OrmManagerException("The ORM manager can't be created: " + e.getMessage(), e);
         }
     }
@@ -104,10 +109,73 @@ public final class OrmManager implements AutoCloseable {
         throw new IllegalArgumentException("Unsupported field type: " + type);
     }
 
-    public void save(Object entity) {
+    public void save(Object entity) throws SQLException {
+        Class<?> clazz = entity.getClass();
+        OrmEntity ormEntity = clazz.getAnnotation(OrmEntity.class);
+
+        if (ormEntity != null) {
+            StringBuilder sql = new StringBuilder("INSERT INTO " + ormEntity.table() + " (");
+            StringBuilder values = new StringBuilder(" VALUES (");
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                OrmColumn ormColumn = field.getAnnotation(OrmColumn.class);
+                if (ormColumn != null) {
+                    sql.append(ormColumn.name()).append(", ");
+                    try {
+                        values.append("'").append(field.get(entity)).append("', ");
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("Failed to access field value: " + field.getName(), e);
+                    }
+                }
+            }
+
+            sql.delete(sql.length() - 2, sql.length()).append(")");
+            values.delete(values.length() - 2, values.length()).append(");");
+            sql.append(values);
+            log.info(sql.toString());
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql.toString())) {
+                preparedStatement.executeUpdate();
+            }
+        }
     }
 
-    public void update(Object entity) {
+    public void update(Object entity) throws SQLException {
+        Class<?> clazz = entity.getClass();
+        OrmEntity ormEntity = clazz.getAnnotation(OrmEntity.class);
+
+        if (ormEntity != null) {
+            StringBuilder sql = new StringBuilder("UPDATE " + ormEntity.table() + " SET ");
+            String idColumn = null;
+            Object idValue = null;
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                OrmColumn ormColumn = field.getAnnotation(OrmColumn.class);
+                OrmColumnId ormColumnId = field.getAnnotation(OrmColumnId.class);
+                try {
+                    if (ormColumn != null) {
+                        sql.append(ormColumn.name()).append("='").append(field.get(entity)).append("', ");
+                    } else if (ormColumnId != null) {
+                        idColumn = field.getName();
+                        idValue = field.get(entity);
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Failed to access field value: " + field.getName(), e);
+                }
+            }
+
+            if (idColumn == null || idValue == null) {
+                throw new IllegalArgumentException("Entity must have an ID field annotated with @OrmColumnId");
+            }
+
+            sql.delete(sql.length() - 2, sql.length());
+            sql.append(" WHERE ").append(idColumn).append(" = ").append(idValue).append(";");
+            log.info(sql.toString());
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql.toString())) {
+                preparedStatement.executeUpdate();
+            }
+        }
     }
 
     public <T> T findById(Long id, Class<T> clazz) {
