@@ -6,4 +6,19 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
 
+    <bean id="preProcessorToUpper"
+          class="edu.school21.preprocessor.impl.PreProcessorToUpperImpl">
+    </bean>
+
+    <bean id="errorRender"
+          class="edu.school21.render.impl.RendererErrImpl">
+        <constructor-arg ref="preProcessorToUpper"/>
+    </bean>
+
+    <bean id="printerWithPrefix"
+          class="edu.school21.printer.impl.PrinterWithPrefixImpl">
+        <constructor-arg ref="errorRender"/>
+        <property name="prefix" value="Prefix "/>
+    </bean>
+
 </beans>
