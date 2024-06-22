@@ -11,10 +11,7 @@ import org.reflections.scanners.Scanners;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -109,7 +106,7 @@ public final class OrmManager implements AutoCloseable {
         throw new IllegalArgumentException("Unsupported field type: " + type);
     }
 
-    public void save(Object entity) throws SQLException {
+    public void save(Object entity) throws SQLException, OrmManagerException {
         Class<?> clazz = entity.getClass();
         OrmEntity ormEntity = clazz.getAnnotation(OrmEntity.class);
 
@@ -124,7 +121,7 @@ public final class OrmManager implements AutoCloseable {
                     try {
                         values.append("'").append(field.get(entity)).append("', ");
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException("Failed to access field value: " + field.getName(), e);
+                        throw new OrmManagerException("Failed to access field value: " + field.getName(), e);
                     }
                 }
             }
@@ -140,7 +137,7 @@ public final class OrmManager implements AutoCloseable {
         }
     }
 
-    public void update(Object entity) throws SQLException {
+    public void update(Object entity) throws SQLException, OrmManagerException {
         Class<?> clazz = entity.getClass();
         OrmEntity ormEntity = clazz.getAnnotation(OrmEntity.class);
 
@@ -160,12 +157,12 @@ public final class OrmManager implements AutoCloseable {
                         idValue = field.get(entity);
                     }
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Failed to access field value: " + field.getName(), e);
+                    throw new OrmManagerException("Failed to access field value: " + field.getName(), e);
                 }
             }
 
             if (idColumn == null || idValue == null) {
-                throw new IllegalArgumentException("Entity must have an ID field annotated with @OrmColumnId");
+                throw new OrmManagerException("Entity must have an ID field annotated with @OrmColumnId");
             }
 
             sql.delete(sql.length() - 2, sql.length());
@@ -178,8 +175,61 @@ public final class OrmManager implements AutoCloseable {
         }
     }
 
-    public <T> T findById(Long id, Class<T> clazz) {
+    public <T> T findById(Long id, Class<T> clazz) throws SQLException, OrmManagerException {
+        OrmEntity ormEntity = clazz.getAnnotation(OrmEntity.class);
+
+        if (ormEntity != null) {
+            String sql = "SELECT * FROM " + ormEntity.table() + " WHERE id = ?;";
+            log.info(sql);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setLong(1, id);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return createEntityFromResultSet(resultSet, clazz);
+                    }
+                }
+            } catch (ReflectiveOperationException e) {
+                throw new OrmManagerException("Failed to create entity instance", e);
+            }
+        }
+
         return null;
+    }
+
+    private <T> T createEntityFromResultSet(ResultSet resultSet, Class<T> clazz) throws ReflectiveOperationException, SQLException {
+        T entity = clazz.getDeclaredConstructor().newInstance();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            field.setAccessible(true);
+            OrmColumn ormColumn = field.getAnnotation(OrmColumn.class);
+            OrmColumnId ormColumnId = field.getAnnotation(OrmColumnId.class);
+            if (ormColumn != null || ormColumnId != null) {
+                String columnName = ormColumn != null ? ormColumn.name() : field.getName();
+                Object value = getFieldValueFromResultSet(resultSet, field, columnName);
+                field.set(entity, value);
+            }
+        }
+
+        return entity;
+    }
+
+    private Object getFieldValueFromResultSet(ResultSet resultSet, Field field, String columnName) throws SQLException {
+        Class<?> fieldType = field.getType();
+        Object value = null;
+
+        if (fieldType == Long.class || fieldType == long.class) {
+            value = resultSet.getLong(columnName);
+        } else if (fieldType == Integer.class || fieldType == int.class) {
+            value = resultSet.getInt(columnName);
+        } else if (fieldType == String.class) {
+            value = resultSet.getString(columnName);
+        } else if (fieldType == Double.class || fieldType == double.class) {
+            value = resultSet.getDouble(columnName);
+        } else if (fieldType == Boolean.class || fieldType == boolean.class) {
+            value = resultSet.getBoolean(columnName);
+        }
+
+        return value;
     }
 
     public void begin() throws OrmManagerException {
