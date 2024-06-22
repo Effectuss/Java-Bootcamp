@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.school21</groupId>
-    <artifactId>spring-context</artifactId>
+    <artifactId>jdbc-template</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>spring-context</name>
+    <name>jdbc-template</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -17,11 +17,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>6.1.10</version>
-        </dependency>
     </dependencies>
 
 </project>
