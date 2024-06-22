@@ -15,10 +15,10 @@ public class User {
     @OrmColumnId
     private Long id;
 
-    @OrmColumn(name = "first_name", length = 10)
+    @OrmColumn(name = "first_name", length = 15)
     private String firstName;
 
-    @OrmColumn(name = "last_name", length = 10)
+    @OrmColumn(name = "last_name", length = 15)
     private String lastName;
 
     @OrmColumn(name = "age")
