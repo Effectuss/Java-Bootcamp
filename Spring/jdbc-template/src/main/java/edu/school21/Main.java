@@ -21,7 +21,14 @@ public class Main {
             usersRepositoryJdbcTemplate.save(userJdbcTemplate);
         }
 
-        System.out.println(usersRepositoryJdbc.findAll());
-        System.out.println(usersRepositoryJdbcTemplate.findAll());
+        System.out.println("Jdbc findAll call");
+        var jdbcUsers = usersRepositoryJdbc.findAll();
+        if (jdbcUsers != null) {
+            jdbcUsers.forEach(System.out::println);
+        }
+        
+        System.out.println("JdbcTemplate findAll call");
+        var jdbcTemplateUsers = usersRepositoryJdbcTemplate.findAll();
+        jdbcTemplateUsers.forEach(System.out::println);
     }
 }

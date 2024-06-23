@@ -22,7 +22,7 @@ public class MessageRepositoryJdbcImpl implements MessageRepository {
                 messages.id AS message_id,
                 messages.text,
                 messages.message_date,
-                chatrooms.id AS chatroom_id,
+                chatrooms.id AS chatroom_id,    
                 chatrooms.name,
                 users.id AS user_id,
                 users.login,
