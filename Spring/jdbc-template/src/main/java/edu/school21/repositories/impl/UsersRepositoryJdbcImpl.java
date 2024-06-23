@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class UsersRepositoryJdbcImpl implements UsersRepository {
+    private final DataSource dataSource;
 
     public UsersRepositoryJdbcImpl(DataSource dataSource) {
-
-
+        this.dataSource = dataSource;
     }
 
     @Override

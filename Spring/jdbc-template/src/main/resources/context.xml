@@ -5,5 +5,40 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <context:property-placeholder location="classpath:db.properties"/>
 
+    <bean id="hikariConfigBean" class="com.zaxxer.hikari.HikariConfig">
+        <property name="driverClassName" value="${db.driver.name}"/>
+        <property name="jdbcUrl" value="${db.url}"/>
+        <property name="username" value="${db.user}"/>
+        <property name="password" value="${db.password}"/>
+    </bean>
+
+    <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <constructor-arg ref="hikariConfigBean"/>
+    </bean>
+
+    <bean id="driverManagerDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <constructor-arg type="java.lang.String" name="url" value="${db.url}"/>
+        <constructor-arg type="java.lang.String" name="username" value="${db.user}"/>
+        <constructor-arg type="java.lang.String" name="password" value="${db.password}"/>
+        <property name="driverClassName" value="${db.driver.name}"/>
+    </bean>
+
+    <bean id="jdbcInitializer" class="org.springframework.jdbc.datasource.init.DataSourceInitializer">
+        <property name="dataSource" ref="hikariDataSource"/>
+        <property name="databasePopulator">
+            <bean class="org.springframework.jdbc.datasource.init.ResourceDatabasePopulator">
+                <property name="scripts" value="classpath:schema.sql"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="usersRepositoryJdbc" class="edu.school21.repositories.impl.UsersRepositoryJdbcImpl">
+        <constructor-arg ref="driverManagerDataSource"/>
+    </bean>
+
+    <bean id="usersRepositoryJdbcTemplate" class="edu.school21.repositories.impl.UsersRepositoryJdbcTemplateImpl">
+        <constructor-arg ref="hikariDataSource"/>
+    </bean>
 </beans>
