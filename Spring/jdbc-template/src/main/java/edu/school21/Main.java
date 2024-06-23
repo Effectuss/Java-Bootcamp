@@ -26,8 +26,8 @@ public class Main {
         if (jdbcUsers != null) {
             jdbcUsers.forEach(System.out::println);
         }
-        
-        System.out.println("JdbcTemplate findAll call");
+
+        System.out.println("\n\n\nJdbcTemplate findAll call");
         var jdbcTemplateUsers = usersRepositoryJdbcTemplate.findAll();
         jdbcTemplateUsers.forEach(System.out::println);
     }

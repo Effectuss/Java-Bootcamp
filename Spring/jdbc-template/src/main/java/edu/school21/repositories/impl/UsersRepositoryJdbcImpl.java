@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +26,7 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
 
     private static final String SAVE_USER_ERROR = "The user with id %d cant be save, because: %s";
     private static final String UPDATE_USER_ERROR = "The user with id %d cant be update, because: %s";
+    private static final String DELETE_USER_ERROR = "The user with id %d cant be update, because: %s";
     private final DataSource dataSource;
 
     public UsersRepositoryJdbcImpl(DataSource dataSource) {
@@ -32,12 +35,33 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
 
     @Override
     public User findById(Long id) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID_QUERY)) {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapRow(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            throw new UserRepositoryException(e.getMessage(), e);
+        }
         return null;
     }
 
     @Override
     public List<User> findAll() {
-        return null;
+        List<User> users = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(FIND_ALL_USERS_QUERY)) {
+            while (resultSet.next()) {
+                users.add(mapRow(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new UserRepositoryException(e.getMessage(), e);
+        }
+        return users;
     }
 
     @Override
@@ -71,13 +95,39 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
 
     @Override
     public void delete(Long id) {
-        try {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(DELETE_USER_QUERY)) {
+            statement.setLong(1, id);
 
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            String err = String.format(DELETE_USER_ERROR, id, e.getMessage());
+            log.error(err);
+            throw new UserRepositoryException(err, e);
         }
     }
 
+
     @Override
     public Optional<User> findByEmail(String email) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_EMAIL_QUERY)) {
+            statement.setString(1, email);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+        }
         return Optional.empty();
+    }
+
+    private User mapRow(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getLong("id"));
+        user.setEmail(resultSet.getString("email"));
+        return user;
     }
 }
