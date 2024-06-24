@@ -109,7 +109,6 @@ public class Main {
 
     private static void updateField(Scanner scanner, PrintWriter printWriter, Object instance)
             throws NoSuchFieldException, IllegalAccessException {
-        scanner.nextLine();
         String fieldName = scanner.nextLine();
 
         Field selectedField = instance.getClass().getDeclaredField(fieldName);
@@ -124,7 +123,6 @@ public class Main {
 
     private static void callMethod(Scanner scanner, PrintWriter printWriter, Object instance)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        scanner.nextLine();
         String methodSignature = scanner.nextLine();
 
         String methodName = MethodSignatureParser.extractMethodName(methodSignature);
@@ -147,17 +145,19 @@ public class Main {
     }
 
     private static Object readObjectFromCmd(Scanner scanner, Class<?> type) {
+        String input = scanner.nextLine();
         if (type == boolean.class || type == Boolean.class) {
-            return scanner.nextBoolean();
+            return Boolean.parseBoolean(input);
         } else if (type == int.class || type == Integer.class) {
-            return scanner.nextInt();
+            return Integer.parseInt(input);
         } else if (type == double.class || type == Double.class) {
-            return scanner.nextDouble();
+            return Double.parseDouble(input);
         } else if (type == long.class || type == Long.class) {
-            return scanner.nextLong();
+            return Long.parseLong(input);
         } else {
-            return scanner.nextLine();
+            return input;
         }
     }
+
 
 }

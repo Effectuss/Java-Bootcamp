@@ -13,7 +13,7 @@ public final class MethodSignatureParser {
     }
 
     public static String extractMethodName(String methodSignature) {
-        Pattern pattern = Pattern.compile("\\w+\\s+(\\w+)\\(");
+        Pattern pattern = Pattern.compile("^(\\w+)\\s*\\(");
         Matcher matcher = pattern.matcher(methodSignature);
 
         if (matcher.find()) {
