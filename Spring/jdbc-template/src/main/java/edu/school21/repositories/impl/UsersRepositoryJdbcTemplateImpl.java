@@ -51,8 +51,7 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
     @Override
     public void update(User entity) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("email", entity.getEmail())
+        MapSqlParameterSource params = new MapSqlParameterSource().addValue("email", entity.getEmail())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(UPDATE_USER_QUERY, params);
     }
