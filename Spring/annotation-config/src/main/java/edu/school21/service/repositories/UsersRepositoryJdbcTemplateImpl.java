@@ -3,6 +3,8 @@ package edu.school21.service.repositories;
 import edu.school21.service.models.User;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Collate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,7 +26,8 @@ public class UsersRepositoryJdbcTemplateImpl implements UsersRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public UsersRepositoryJdbcTemplateImpl(DataSource dataSource) {
+    @Autowired
+    public UsersRepositoryJdbcTemplateImpl(@Qualifier("hikariDataSource") DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 

@@ -3,6 +3,8 @@ package edu.school21.service.repositories;
 import edu.school21.service.models.User;
 import edu.school21.service.repositories.execption.UserRepositoryException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -26,7 +28,8 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
     private static final String DELETE_USER_ERROR = "The user with id %d cant be update, because: %s";
     private final DataSource dataSource;
 
-    public UsersRepositoryJdbcImpl(DataSource dataSource) {
+    @Autowired
+    public UsersRepositoryJdbcImpl(@Qualifier("driverManagerDataSource") DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
