@@ -2,12 +2,16 @@ package edu.school21.service.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import javax.sql.DataSource;
 
@@ -52,5 +56,17 @@ public class ApplicationConfig {
         dataSource.setDriverClassName(driverName);
 
         return dataSource;
+    }
+
+    @Bean
+    public DataSourceInitializer dataSourceInitializer(@Qualifier("hikariDataSource") DataSource dataSource) {
+        DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
+
+        dataSourceInitializer.setDataSource(dataSource);
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.addScript(new ClassPathResource("schema.sql"));
+        dataSourceInitializer.setDatabasePopulator(databasePopulator);
+
+        return dataSourceInitializer;
     }
 }

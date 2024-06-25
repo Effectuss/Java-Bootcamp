@@ -19,9 +19,9 @@ public class UsersRepositoryJdbcImpl implements UsersRepository {
     private static final String SAVE_QUERY = "INSERT INTO users (id, email) VALUES (?, ?);";
     private static final String UPDATE_QUERY = "UPDATE users SET email = ? WHERE id = ?;";
     private static final String DELETE_USER_QUERY = "DELETE FROM users WHERE id = ?;";
-    private static final String FIND_BY_EMAIL_QUERY = "SELECT * FROM users WHERE email = ?;";
-    private static final String FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?;";
-    private static final String FIND_ALL_USERS_QUERY = "SELECT * FROM users;";
+    private static final String FIND_BY_EMAIL_QUERY = "SELECT users.id, users.email FROM users WHERE email = ?;";
+    private static final String FIND_BY_ID_QUERY = "SELECT users.id, users.email FROM users WHERE id = ?;";
+    private static final String FIND_ALL_USERS_QUERY = "SELECT users.id, users.email FROM users;";
 
     private static final String SAVE_USER_ERROR = "The user with id %d cant be save, because: %s";
     private static final String UPDATE_USER_ERROR = "The user with id %d cant be update, because: %s";
